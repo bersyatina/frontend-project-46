@@ -10,9 +10,9 @@ program
   .option('-f, --format <type>', 'output format (default: "stylish")')
   .argument('<filepath1>', 'first file path')
   .argument('<filepath2>', 'second file path')
-  .action((filepath1, filepath2, options) => {
-      const result = genDiff(filepath1, filepath2, options.format);
-      console.log(result);
+  .action((filepath1, filepath2) => {
+    const result = genDiff(filepath1, filepath2);
+    console.log(result);
   });
 
 program.parse();

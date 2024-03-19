@@ -1,4 +1,4 @@
-import json from "./parsers/json.js";
+import json from './parsers/json.js';
 
 export default (firstContent, secondContent, format) => {
   let firstParsedData, secondParsedData;
@@ -10,4 +10,4 @@ export default (firstContent, secondContent, format) => {
   }
 
   return [firstParsedData, secondParsedData];
-}
+};

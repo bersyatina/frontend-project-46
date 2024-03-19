@@ -1,4 +1,4 @@
-function genDiff (firstContext, secondContext) {
+function genDiff(firstContext, secondContext) {
   console.log('Первый файл', firstContext);
   console.log('Второй файл:', secondContext);
 }

@@ -1,12 +1,13 @@
-import fs from "fs";
-import path from "path";
-import formatters from "./formatters.js";
+import fs from 'fs';
+import path from 'path';
+import formatters from './formatters.js';
 
 const getContentFile = (filepath) => {
+  // eslint-disable-next-line no-undef
   return fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
-}
+};
 
-export default (firstPath, secondPath, format = "json") => {
+export default (firstPath, secondPath) => {
   const firstContent = getContentFile(firstPath);
   const secondContent = getContentFile(secondPath);
   const contentToArray = formatters(firstContent, secondContent);
@@ -18,28 +19,37 @@ export default (firstPath, secondPath, format = "json") => {
 const getResultToArray = (contentToArray) => {
   const filesKeys = generateKeys(contentToArray[0], contentToArray[1]);
 
-  return filesKeys.map(fileKey => getComparison(fileKey, contentToArray));
+  return filesKeys.map((fileKey) => getComparison(fileKey, contentToArray));
 };
 
 const getComparison = (fileKey, contentToArray) => {
-  if (contentToArray[0][fileKey] !== undefined && contentToArray[1][fileKey] !== undefined) {
+  if (
+    contentToArray[0][fileKey] !== undefined &&
+    contentToArray[1][fileKey] !== undefined
+  ) {
     if (contentToArray[0][fileKey] !== contentToArray[1][fileKey]) {
       return [
         ['-', fileKey, contentToArray[0][fileKey]],
         ['+', fileKey, contentToArray[1][fileKey]],
-      ]
+      ];
     }
     return [' ', fileKey, contentToArray[0][fileKey]];
-  } else if (contentToArray[0][fileKey] !== undefined && contentToArray[1][fileKey] === undefined) {
+  } else if (
+    contentToArray[0][fileKey] !== undefined &&
+    contentToArray[1][fileKey] === undefined
+  ) {
     return ['-', fileKey, contentToArray[0][fileKey]];
-  } else if (contentToArray[1][fileKey] !== undefined && contentToArray[0][fileKey] === undefined) {
+  } else if (
+    contentToArray[1][fileKey] !== undefined &&
+    contentToArray[0][fileKey] === undefined
+  ) {
     return ['+', fileKey, contentToArray[1][fileKey]];
   }
   return [];
 };
 
 const generateKeys = (firsArr, secondArr) => {
-  return Object.keys({...firsArr, ...secondArr}).sort();
+  return Object.keys({ ...firsArr, ...secondArr }).sort();
 };
 
 const getResultToString = (resultToArray, otherString = '') => {
