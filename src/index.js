@@ -48,7 +48,7 @@ const getComparison = (fileKey, contentToArray) => {
   return [];
 };
 
-const generateKeys = (firsArr, secondArr) => {
+export const generateKeys = (firsArr, secondArr) => {
   return Object.keys({ ...firsArr, ...secondArr }).sort();
 };
 
