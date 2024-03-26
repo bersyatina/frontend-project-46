@@ -3,6 +3,7 @@ import path from 'path';
 import formatters from './formatters.js';
 
 const getContentFile = (filepath) => {
+  console.log('');
   // eslint-disable-next-line no-undef
   return fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
 };
