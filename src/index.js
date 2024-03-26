@@ -18,7 +18,6 @@ export default (firstPath, secondPath) => {
 
 const getResultToArray = (contentToArray) => {
   const filesKeys = generateKeys(contentToArray[0], contentToArray[1]);
-
   return filesKeys.map((fileKey) => getComparison(fileKey, contentToArray));
 };
 
@@ -48,8 +47,8 @@ const getComparison = (fileKey, contentToArray) => {
   return [];
 };
 
-export const generateKeys = (firsArr, secondArr) => {
-  return Object.keys({ ...firsArr, ...secondArr }).sort();
+export const generateKeys = (firsObj, secondObj) => {
+  return Object.keys({ ...firsObj, ...secondObj }).sort();
 };
 
 const getResultToString = (resultToArray, otherString = '') => {
