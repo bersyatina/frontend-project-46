@@ -2,15 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import formatters from './formatters.js';
 
-const getContentFile = (filepath) => {
-  console.log('');
-  // eslint-disable-next-line no-undef
-  return fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8');
+const getFileData = (filepath) => {
+  return [
+    // eslint-disable-next-line no-undef
+    fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8'),
+    path.extname(filepath),
+  ];
 };
 
-export default (firstPath, secondPath) => {
-  const firstContent = getContentFile(firstPath);
-  const secondContent = getContentFile(secondPath);
+export default (firstPath, secondPath, format = 'stylish') => {
+  const firstContent = getFileData(firstPath);
+  const secondContent = getFileData(secondPath);
   const contentToArray = formatters(firstContent, secondContent);
   const resultToArray = getResultToArray(contentToArray);
   const resultString = getResultToString(resultToArray);
