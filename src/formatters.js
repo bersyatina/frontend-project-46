@@ -1,10 +1,8 @@
 import json from './parsers/json.js';
 import yaml from 'js-yaml';
 
-export default (...filesContents) => {
-  return filesContents.map((fileData) => {
-    return getContentFile(fileData[0], fileData[1]);
-  });
+export default (fileContent) => {
+  return getContentFile(fileContent[0], fileContent[1]);
 };
 
 const getContentFile = (content, extension) => {
