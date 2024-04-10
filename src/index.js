@@ -25,23 +25,49 @@ export default (firstPath, secondPath, format = 'stylish') => {
 
 const getResultToArray = (firstContentToArray, secondContentToArray) => {
   const filesKeys = generateKeys(firstContentToArray, secondContentToArray);
-  return filesKeys.map((fileKey) => {
+  const result = filesKeys.map((fileKey) => {
     if (isValidObject(fileKey, firstContentToArray, secondContentToArray)) {
       const comparison = getComparison(
         fileKey,
         firstContentToArray,
         secondContentToArray,
       );
-      return [
-        comparison[0],
-        comparison[1],
-        getResultToArray(
+      return {
+        operator: comparison[0],
+        key: comparison[1],
+        value: getResultToArray(
           firstContentToArray[fileKey],
           secondContentToArray[fileKey],
         ),
-      ];
+      };
     }
     return getComparison(fileKey, firstContentToArray, secondContentToArray);
+  });
+  // const replacedKeys = getReplacedKeys(result);
+  return getComparisonArray(result);
+};
+
+const getComparisonArray = (contentToArray) => {
+  const result = contentToArray.reduce((acc, currentValue) => {
+    if (currentValue.operator === 'comparisonObject') {
+      acc.push(currentValue.value[0]);
+      acc.push(currentValue.value[1]);
+      return acc;
+    }
+    acc.push(currentValue);
+    return acc;
+  }, []);
+
+  console.log(result);
+  console.log('end');
+  return result;
+};
+
+const getReplacedKeys = (array) => {
+  return array.map((item) => {
+    if (item.operator === 'comparisonObject') {
+      return item.key;
+    }
   });
 };
 
@@ -60,23 +86,51 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
       isKeyNotExistsInArrays(fileKey, firstContentToArray, secondContentToArray)
     ) {
       return firstContentToArray[fileKey] === secondContentToArray[fileKey]
-        ? [' ', fileKey, firstContentToArray[fileKey]]
-        : [
-            ['-', fileKey, firstContentToArray[fileKey]],
-            ['+', fileKey, secondContentToArray[fileKey]],
-          ];
+        ? {
+            operator: ' ',
+            key: fileKey,
+            value: firstContentToArray[fileKey],
+          }
+        : {
+            operator: 'comparisonObject',
+            key: fileKey,
+            value: [
+              {
+                operator: '-',
+                key: fileKey,
+                value: firstContentToArray[fileKey],
+              },
+              {
+                operator: '+',
+                key: fileKey,
+                value: secondContentToArray[fileKey],
+              },
+            ],
+          };
     }
-    return [' ', fileKey, firstContentToArray[fileKey]];
+    return {
+      operator: ' ',
+      key: fileKey,
+      value: firstContentToArray[fileKey],
+    };
   } else if (
     isKeyExistsInOneArray(fileKey, firstContentToArray, secondContentToArray)
   ) {
-    return ['-', fileKey, firstContentToArray[fileKey]];
+    return {
+      operator: '-',
+      key: fileKey,
+      value: firstContentToArray[fileKey],
+    };
   } else if (
     isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)
   ) {
-    return ['+', fileKey, secondContentToArray[fileKey]];
+    return {
+      operator: '+',
+      key: fileKey,
+      value: secondContentToArray[fileKey],
+    };
   }
-  return [];
+  return {};
 };
 
 const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => {
@@ -102,37 +156,37 @@ export const generateKeys = (firsObj, secondObj) => {
   return Object.keys({ ...firsObj, ...secondObj }).sort();
 };
 
-const isComparisonObject = (data) => {
+const isComparisonObject = (object) => {
   return (
-    data[0] !== undefined && data[1] !== undefined && data[2] !== undefined
+    object.key !== undefined &&
+    object.operator !== undefined &&
+    object.value !== undefined
   );
 };
 
 const getResultToString = (resultToArray, depth = 1) => {
+  console.log(resultToArray);
   const string = resultToArray.map((item) => {
     const currentIdent = '  '.repeat(depth);
     const longIdent = '  '.repeat(depth + 1);
+
     if (typeof item === 'object') {
       if (!isComparisonObject(item)) {
         return (
           longIdent +
-          resultToArray.find((findItem) => findItem === item) +
+          resultToArray.find((findItem) => item === findItem) +
           ': ' +
           getResultToString(item, depth + 2)
         );
       } else {
-        const line = `${currentIdent}${item[0]} ${item[1]}: `;
-        return typeof item[2] === 'object'
-          ? line + getResultToString(item[2], depth + 2)
-          : line + item[2];
+        const line = `${currentIdent}${item.operator} ${item.key}: `;
+        return typeof item.value === 'object'
+          ? line + getResultToString(item.value, depth + 2)
+          : line + item.value;
       }
     }
-    return (
-      longIdent +
-      resultToArray.find((findItem) => item === findItem) +
-      ': ' +
-      item
-    );
+    return `${longIdent}${item.operator} ${item.key}: ${item.value}`;
   }, resultToArray);
-  return '{\n' + string.join('\n') + '\n}';
+  const lastIndent = ' '.repeat(depth - 1);
+  return '{\n' + string.join('\n') + `\n${lastIndent}}`;
 };
