@@ -15,7 +15,9 @@ export default (firstPath, secondPath, format = 'stylish') => {
   const secondContent = getFileData(secondPath);
   const firstContentToArray = formatters(firstContent);
   const secondContentToArray = formatters(secondContent);
+  const filesKeys = generateKeys(firstContentToArray, secondContentToArray);
   const resultToArray = getResultToArray(
+    filesKeys,
     firstContentToArray,
     secondContentToArray,
   );
@@ -23,19 +25,27 @@ export default (firstPath, secondPath, format = 'stylish') => {
   return resultString;
 };
 
-const getResultToArray = (firstContentToArray, secondContentToArray) => {
-  const filesKeys = generateKeys(firstContentToArray, secondContentToArray);
+const getResultToArray = (
+  filesKeys,
+  firstContentToArray,
+  secondContentToArray,
+) => {
   const result = filesKeys.map((fileKey) => {
     if (isValidObject(fileKey, firstContentToArray, secondContentToArray)) {
+      const arrayKeys = generateKeys(
+        firstContentToArray[fileKey],
+        secondContentToArray[fileKey],
+      );
       const comparison = getComparison(
         fileKey,
         firstContentToArray,
         secondContentToArray,
       );
       return {
-        operator: comparison[0],
-        key: comparison[1],
+        operator: comparison.operator,
+        key: comparison.key,
         value: getResultToArray(
+          arrayKeys,
           firstContentToArray[fileKey],
           secondContentToArray[fileKey],
         ),
@@ -58,8 +68,6 @@ const getComparisonArray = (contentToArray) => {
     return acc;
   }, []);
 
-  console.log(result);
-  console.log('end');
   return result;
 };
 
@@ -165,7 +173,11 @@ const isComparisonObject = (object) => {
 };
 
 const getResultToString = (resultToArray, depth = 1) => {
-  console.log(resultToArray);
+  if (!Array.isArray(resultToArray)) {
+    console.log(typeof resultToArray);
+    console.log(resultToArray);
+    return '';
+  }
   const string = resultToArray.map((item) => {
     const currentIdent = '  '.repeat(depth);
     const longIdent = '  '.repeat(depth + 1);
@@ -187,6 +199,6 @@ const getResultToString = (resultToArray, depth = 1) => {
     }
     return `${longIdent}${item.operator} ${item.key}: ${item.value}`;
   }, resultToArray);
-  const lastIndent = ' '.repeat(depth - 1);
+  const lastIndent = '  '.repeat(depth - 1);
   return '{\n' + string.join('\n') + `\n${lastIndent}}`;
 };
