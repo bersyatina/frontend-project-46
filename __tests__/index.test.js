@@ -1,6 +1,5 @@
 import { expect, test } from '@jest/globals';
 import * as index from '../src/index.js';
-import path from 'path';
 
 test('generateKeys', () => {
   expect(
