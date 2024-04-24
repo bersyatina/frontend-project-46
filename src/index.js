@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import formatters from './formatters.js';
+import parsers from './parsers/parsers.js';
+import format from './formatters/formatters.js';
 
 const getFileData = (filepath) => {
   return [
@@ -10,19 +11,20 @@ const getFileData = (filepath) => {
   ];
 };
 
-export default (firstPath, secondPath, format = 'stylish') => {
+export default (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
   const secondContent = getFileData(secondPath);
-  const firstContentToArray = formatters(firstContent);
-  const secondContentToArray = formatters(secondContent);
+
+  const firstContentToArray = parsers(firstContent);
+  const secondContentToArray = parsers(secondContent);
   const filesKeys = generateKeys(firstContentToArray, secondContentToArray);
+
   const resultToArray = getResultToArray(
     filesKeys,
     firstContentToArray,
     secondContentToArray,
   );
-  const resultString = getResultToString(resultToArray);
-  return resultString;
+  return format(resultToArray, formatName);
 };
 
 const getResultToArray = (
@@ -53,12 +55,11 @@ const getResultToArray = (
     }
     return getComparison(fileKey, firstContentToArray, secondContentToArray);
   });
-  // const replacedKeys = getReplacedKeys(result);
   return getComparisonArray(result);
 };
 
 const getComparisonArray = (contentToArray) => {
-  const result = contentToArray.reduce((acc, currentValue) => {
+  return contentToArray.reduce((acc, currentValue) => {
     if (currentValue.operator === 'comparisonObject') {
       acc.push(currentValue.value[0]);
       acc.push(currentValue.value[1]);
@@ -67,16 +68,6 @@ const getComparisonArray = (contentToArray) => {
     acc.push(currentValue);
     return acc;
   }, []);
-
-  return result;
-};
-
-const getReplacedKeys = (array) => {
-  return array.map((item) => {
-    if (item.operator === 'comparisonObject') {
-      return item.key;
-    }
-  });
 };
 
 const isValidObject = (fileKey, firstValue, secondValue) => {
@@ -97,7 +88,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
         ? {
             operator: ' ',
             key: fileKey,
-            value: firstContentToArray[fileKey],
+            value: getValidObject(firstContentToArray[fileKey]),
           }
         : {
             operator: 'comparisonObject',
@@ -106,12 +97,12 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
               {
                 operator: '-',
                 key: fileKey,
-                value: firstContentToArray[fileKey],
+                value: getValidObject(firstContentToArray[fileKey]),
               },
               {
                 operator: '+',
                 key: fileKey,
-                value: secondContentToArray[fileKey],
+                value: getValidObject(secondContentToArray[fileKey]),
               },
             ],
           };
@@ -119,7 +110,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     return {
       operator: ' ',
       key: fileKey,
-      value: firstContentToArray[fileKey],
+      value: getValidObject(firstContentToArray[fileKey]),
     };
   } else if (
     isKeyExistsInOneArray(fileKey, firstContentToArray, secondContentToArray)
@@ -127,7 +118,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     return {
       operator: '-',
       key: fileKey,
-      value: firstContentToArray[fileKey],
+      value: getValidObject(firstContentToArray[fileKey]),
     };
   } else if (
     isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)
@@ -135,10 +126,24 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     return {
       operator: '+',
       key: fileKey,
-      value: secondContentToArray[fileKey],
+      value: getValidObject(secondContentToArray[fileKey]),
     };
   }
   return {};
+};
+
+const getValidObject = (object) => {
+  if (typeof object !== 'object' || object === null) {
+    return object;
+  }
+  const keys = Object.keys(object);
+  return keys.map((key) => {
+    return {
+      operator: ' ',
+      key: key,
+      value: getValidObject(object[key]),
+    };
+  });
 };
 
 const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => {
@@ -164,41 +169,10 @@ export const generateKeys = (firsObj, secondObj) => {
   return Object.keys({ ...firsObj, ...secondObj }).sort();
 };
 
-const isComparisonObject = (object) => {
+export const isComparisonObject = (object) => {
   return (
     object.key !== undefined &&
     object.operator !== undefined &&
     object.value !== undefined
   );
-};
-
-const getResultToString = (resultToArray, depth = 1) => {
-  if (!Array.isArray(resultToArray)) {
-    console.log(typeof resultToArray);
-    console.log(resultToArray);
-    return '';
-  }
-  const string = resultToArray.map((item) => {
-    const currentIdent = '  '.repeat(depth);
-    const longIdent = '  '.repeat(depth + 1);
-
-    if (typeof item === 'object') {
-      if (!isComparisonObject(item)) {
-        return (
-          longIdent +
-          resultToArray.find((findItem) => item === findItem) +
-          ': ' +
-          getResultToString(item, depth + 2)
-        );
-      } else {
-        const line = `${currentIdent}${item.operator} ${item.key}: `;
-        return typeof item.value === 'object'
-          ? line + getResultToString(item.value, depth + 2)
-          : line + item.value;
-      }
-    }
-    return `${longIdent}${item.operator} ${item.key}: ${item.value}`;
-  }, resultToArray);
-  const lastIndent = '  '.repeat(depth - 1);
-  return '{\n' + string.join('\n') + `\n${lastIndent}}`;
 };

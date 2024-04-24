@@ -1,4 +1,4 @@
-import json from './parsers/json.js';
+import json from '../parsers/json.js';
 import yaml from 'js-yaml';
 
 export default (fileContent) => {
