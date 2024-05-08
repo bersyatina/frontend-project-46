@@ -88,7 +88,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
         ? {
             operator: ' ',
             key: fileKey,
-            value: getValidObject(firstContentToArray[fileKey]),
+            value: firstContentToArray[fileKey],
           }
         : {
             operator: 'comparisonObject',
@@ -97,12 +97,12 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
               {
                 operator: '-',
                 key: fileKey,
-                value: getValidObject(firstContentToArray[fileKey]),
+                value: firstContentToArray[fileKey],
               },
               {
                 operator: '+',
                 key: fileKey,
-                value: getValidObject(secondContentToArray[fileKey]),
+                value: secondContentToArray[fileKey],
               },
             ],
           };
@@ -110,7 +110,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     return {
       operator: ' ',
       key: fileKey,
-      value: getValidObject(firstContentToArray[fileKey]),
+      value: firstContentToArray[fileKey],
     };
   } else if (
     isKeyExistsInOneArray(fileKey, firstContentToArray, secondContentToArray)
@@ -118,7 +118,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     return {
       operator: '-',
       key: fileKey,
-      value: getValidObject(firstContentToArray[fileKey]),
+      value: firstContentToArray[fileKey],
     };
   } else if (
     isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)
@@ -126,7 +126,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     return {
       operator: '+',
       key: fileKey,
-      value: getValidObject(secondContentToArray[fileKey]),
+      value: secondContentToArray[fileKey],
     };
   }
   return {};
@@ -139,7 +139,7 @@ const getValidObject = (object) => {
   const keys = Object.keys(object);
   return keys.map((key) => {
     return {
-      operator: ' ',
+      operator: '',
       key: key,
       value: getValidObject(object[key]),
     };
