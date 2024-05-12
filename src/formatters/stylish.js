@@ -19,17 +19,17 @@ const getResultToStylish = (resultToArray, depth = 1) => {
 
   const string = resultToArray.map((item) => {
     const currentItem = item;
-    if (typeof currentItem === 'object') {
-      currentItem.operator = currentItem.operator === ''
-        ? currentItem.operator
-        : currentItem.operator;
+    const currentOperator = currentItem.operator === ''
+      ? ' '
+      : currentItem.operator;
 
+    if (typeof currentItem === 'object') {
       if (!isComparisonObject(currentItem)) {
         const filteredArray = resultToArray.find((findItem) => item === findItem);
         const resultToStylish = getResultToStylish(currentItem, depth + 2);
         return `${longIdent}${filteredArray}: ${resultToStylish}`;
       }
-      const line = `${currentIdent}${currentItem.operator} ${currentItem.key}: `;
+      const line = `${currentIdent}${currentOperator} ${currentItem.key}: `;
       if (Array.isArray(currentItem.value)) {
         return line + getResultToStylish(currentItem.value, depth + 2);
       }
@@ -38,7 +38,8 @@ const getResultToStylish = (resultToArray, depth = 1) => {
       }
       return `${line}${currentItem.value}`;
     }
-    return `${longIdent}${currentItem.operator} ${currentItem.key}: ${currentItem.value}`;
+
+    return `${longIdent}${currentOperator} ${currentItem.key}: ${currentItem.value}`;
   }, resultToArray);
 
   const joinedString = string.join('\n');
