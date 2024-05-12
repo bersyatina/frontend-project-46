@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import parsers from './parsers/parsers.js';
-import { getResultToStylish } from './formatters/stylish.js';
+import getResultToStylish from './formatters/stylish.js';
 import getResultToJson from './formatters/json.js';
 import getPlainData from './formatters/plain.js';
 

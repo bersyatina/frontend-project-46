@@ -1,6 +1,6 @@
 import { isComparisonObject } from '../parsers/parsers.js';
 
-export const getResultToStylish = (resultToArray, depth = 1) => {
+const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
   const longIdent = '  '.repeat(depth + 1);
   const lastIndent = '  '.repeat(depth - 1);
@@ -43,3 +43,5 @@ export const getResultToStylish = (resultToArray, depth = 1) => {
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
 };
+
+export default getResultToStylish;
