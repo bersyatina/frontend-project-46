@@ -1,5 +1,3 @@
-import { isComparisonObject } from '../parsers/parsers.js';
-
 const getPrimitiveValue = (value) => {
   if (typeof value === 'string') {
     return `"${value}"`;
@@ -30,7 +28,7 @@ const getJsonData = (resultToArray, path = '') => {
       : value;
 
     if (item.operator === '+') {
-      const operation =  filter.length !== 2 ? 'added' : 'replaced';
+      const operation = filter.length !== 2 ? 'added' : 'replaced';
       return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
     }
     if (item.operator === '-') {
@@ -39,7 +37,6 @@ const getJsonData = (resultToArray, path = '') => {
     }
     const operation = 'no changed';
     return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
-
   }, resultToArray);
 
   return `[${array}]`;
