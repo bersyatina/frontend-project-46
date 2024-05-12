@@ -13,7 +13,7 @@ const getPrimitiveData = (data) => {
   }
 };
 
-export const getPlainData = (resultToArray, path = '') => {
+const getPlainData = (resultToArray, path = '') => {
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
     return resultToArray;
   }
@@ -59,3 +59,5 @@ export const getPlainData = (resultToArray, path = '') => {
 
   return `${result}`;
 };
+
+export default getPlainData;
