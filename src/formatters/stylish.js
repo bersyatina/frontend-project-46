@@ -20,10 +20,10 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   const string = resultToArray.map((item) => {
     const currentItem = item;
     if (typeof currentItem === 'object') {
-      const operator = currentItem.operator;
-      if (operator === '') {
-        currentItem.operator = ' ';
-      }
+      currentItem.operator = currentItem.operator === ''
+        ? currentItem.operator
+        : currentItem.operator;
+
       if (!isComparisonObject(currentItem)) {
         const filteredArray = resultToArray.find((findItem) => item === findItem);
         const resultToStylish = getResultToStylish(currentItem, depth + 2);
