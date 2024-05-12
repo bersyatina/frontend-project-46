@@ -132,20 +132,6 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   return {};
 };
 
-const getValidObject = (object) => {
-  if (typeof object !== 'object' || object === null) {
-    return object;
-  }
-  const keys = Object.keys(object);
-  return keys.map((key) => {
-    return {
-      operator: '',
-      key: key,
-      value: getValidObject(object[key]),
-    };
-  });
-};
-
 const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => {
   return (
     firstArray[fileKey] !== undefined && secondArray[fileKey] === undefined
