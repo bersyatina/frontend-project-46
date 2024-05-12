@@ -19,7 +19,7 @@ const getJsonData = (resultToArray, path = '') => {
     });
     return `[{${array}}]`;
   } else {
-    const string = resultToArray.map((item) => {
+    const array = resultToArray.map((item) => {
       if (isComparisonObject(item)) {
         const newPath = `${path}.${item.key}`.replace(/^\.+/, '');
         const filter = resultToArray.filter((value) => value.key === item.key);
@@ -48,7 +48,7 @@ const getJsonData = (resultToArray, path = '') => {
         return `{"path":"${newPath}","operation":"${operation}","value":${value}}`;
       }
     }, resultToArray);
-    return `[${string}]`;
+    return `[${array}]`;
   }
 };
 
