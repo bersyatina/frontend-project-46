@@ -32,16 +32,17 @@ const getJsonData = (resultToArray, path = '') => {
     if (item.operator === '+') {
       const operation =  filter.length !== 2 ? 'added' : 'replaced';
       return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
-    } else if (item.operator === '-') {
+    }
+    if (item.operator === '-') {
       const operation = filter.length !== 2 ? 'removed' : 'replaced by';
       return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
-    } else {
-      const operation = 'no changed';
-      return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
     }
+    const operation = 'no changed';
+    return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
+
   }, resultToArray);
 
   return `[${array}]`;
 };
 
-export const getResultToJson = (resultToArray) => getJsonData(resultToArray);
+export default (resultToArray) => getJsonData(resultToArray);
