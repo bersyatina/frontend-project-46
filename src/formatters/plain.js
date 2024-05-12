@@ -31,22 +31,19 @@ export const getPlainData = (resultToArray, path = '') => {
               if (filter.length !== 2) {
                 const resultValue = getPrimitiveData(item.value);
                 return `Property ${res} was added with value: ${resultValue}`;
-              } else {
-                return '';
               }
+              return '';
             case '-':
               if (filter.length !== 2) {
                 return `Property ${res} was removed`;
-              } else {
-                const nextItem =
-                  resultToArray.findIndex((findItem) => findItem === item) + 1;
-                const nextValue = getPrimitiveData(
-                  resultToArray[nextItem].value,
-                );
-                const primitiveItem = getPrimitiveData(item.value);
-                return `Property ${res} was updated. From ${primitiveItem} to ${nextValue}`;
               }
-            case ' ':
+              const nextItem = resultToArray.findIndex((findItem) => findItem === item) + 1;
+              const nextValue = getPrimitiveData(
+                resultToArray[nextItem].value,
+              );
+              const primitiveItem = getPrimitiveData(item.value);
+              return `Property ${res} was updated. From ${primitiveItem} to ${nextValue}`;
+            default:
               if (typeof item.value === 'object') {
                 return getPlainData(item.value, trimmedPath);
               }
