@@ -157,14 +157,6 @@ export const generateKeys = (firsObj, secondObj) => {
   return Object.keys({ ...firsObj, ...secondObj }).sort();
 };
 
-export const isComparisonObject = (object) => {
-  return (
-    object.key !== undefined &&
-    object.operator !== undefined &&
-    object.value !== undefined
-  );
-};
-
 const format = (resultContent, format = 'stylish') => {
   switch (format) {
     case 'stylish':

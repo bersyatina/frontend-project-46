@@ -1,6 +1,11 @@
-import { isComparisonObject } from '../index.js';
+import { isComparisonObject } from '../parsers/parsers.js';
 
-const getPrimitiveValue = (value) => typeof value === 'string' ? `"${value}"` : value;
+const getPrimitiveValue = (value) => {
+  if (typeof value === 'string') {
+    return `"${value}"`;
+  }
+  return value;
+};
 
 const getJsonData = (resultToArray, path = '') => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {

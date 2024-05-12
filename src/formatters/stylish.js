@@ -1,4 +1,4 @@
-import { isComparisonObject } from '../index.js';
+import { isComparisonObject } from '../parsers/parsers.js';
 
 export const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);

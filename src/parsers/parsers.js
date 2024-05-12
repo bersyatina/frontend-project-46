@@ -17,3 +17,11 @@ const getContentFile = (content, extension) => {
       throw new Error(`unknown file extension: ${extension}`);
   }
 };
+
+export const isComparisonObject = (object) => {
+  return (
+    object.key !== undefined &&
+    object.operator !== undefined &&
+    object.value !== undefined
+  );
+};

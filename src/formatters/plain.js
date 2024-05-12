@@ -1,4 +1,4 @@
-import { isComparisonObject } from '../index.js';
+import { isComparisonObject } from '../parsers/parsers.js';
 
 export const getPlainData = (resultToArray, path = '') => {
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
