@@ -11,18 +11,15 @@ const getJsonData = (resultToArray, path = '') => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
     return resultToArray;
   }
-  let string;
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
-    string = Object.keys(resultToArray).map((currentKey) => {
-      let value = getJsonData(resultToArray[currentKey], path);
-      if (typeof resultToArray[currentKey] !== 'object') {
-        value = getPrimitiveValue(value);
-      }
-      return `"${currentKey}":${value}`;
+    const array = Object.keys(resultToArray).map((currentKey) => {
+      const value = getJsonData(resultToArray[currentKey], path);
+      const resultValue = typeof resultToArray[currentKey] !== 'object' ? getPrimitiveValue(value) : value;
+      return `"${currentKey}":${resultValue}`;
     });
-    string = `{${string}}`;
+    return `[{${array}}]`;
   } else {
-    string = resultToArray.map((item) => {
+    const string = resultToArray.map((item) => {
       if (isComparisonObject(item)) {
         const newPath = `${path}.${item.key}`.replace(/^\.+/, '');
         const filter = resultToArray.filter((value) => value.key === item.key);
@@ -51,9 +48,8 @@ const getJsonData = (resultToArray, path = '') => {
         return `{"path":"${newPath}","operation":"${operation}","value":${value}}`;
       }
     }, resultToArray);
+    return `[${string}]`;
   }
-
-  return `[${string}]`;
 };
 
 export const getResultToJson = (resultToArray) => getJsonData(resultToArray);
