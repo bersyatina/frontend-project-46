@@ -20,7 +20,8 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   const string = resultToArray.map((item) => {
     const currentItem = item;
     if (typeof currentItem === 'object') {
-      if (currentItem.operator === '') {
+      const operator = currentItem.operator;
+      if (operator === '') {
         currentItem.operator = ' ';
       }
       if (!isComparisonObject(currentItem)) {
