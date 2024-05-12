@@ -1,5 +1,5 @@
 import {
-  describe, expect, it, test
+  describe, expect, it, test,
 } from '@jest/globals';
 import fs from 'fs';
 import * as index from '../src/index.js';
