@@ -1,8 +1,7 @@
 import { describe, expect, it, test } from '@jest/globals';
+import fs from 'fs';
 import * as index from '../src/index.js';
 import getDiffFiles from '../src/index.js';
-
-import fs from 'fs';
 
 const readFixtureFile = (filename) =>
   fs.readFileSync(`__fixtures__/${filename}`, 'utf8');

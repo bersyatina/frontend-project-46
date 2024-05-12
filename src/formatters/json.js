@@ -1,12 +1,6 @@
 import { isComparisonObject } from '../index.js';
 
-const getPrimitiveValue = (value) => {
-  return typeof value === 'string' ? `"${value}"` : value;
-};
-
-export const getResultToJson = (resultToArray) => {
-  return getJsonData(resultToArray);
-};
+const getPrimitiveValue = (value) => typeof value === 'string' ? `"${value}"` : value;
 
 const getJsonData = (resultToArray, path = '') => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
@@ -56,3 +50,5 @@ const getJsonData = (resultToArray, path = '') => {
 
   return `[${string}]`;
 };
+
+export const getResultToJson = (resultToArray) => getJsonData(resultToArray);

@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import parsers from './parsers/parsers.js';
-import format from './formatters/formatters.js';
+import { getResultToStylish } from './formatters/stylish.js';
+import { getResultToJson } from './formatters/json.js';
+import { getPlainData } from './formatters/plain.js';
 
 const getFileData = (filepath) => {
   return [
@@ -161,4 +163,17 @@ export const isComparisonObject = (object) => {
     object.operator !== undefined &&
     object.value !== undefined
   );
+};
+
+const format = (resultContent, format = 'stylish') => {
+  switch (format) {
+    case 'stylish':
+      return getResultToStylish(resultContent);
+    case 'json':
+      return getResultToJson(resultContent);
+    case 'plain':
+      return getPlainData(resultContent);
+    default:
+      throw new Error(`The format is not defined: ${format}`);
+  }
 };
