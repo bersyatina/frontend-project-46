@@ -7,45 +7,39 @@ export const getResultToStylish = (resultToArray, depth = 1) => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
     return resultToArray;
   }
-  let string;
+
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
-    string = Object.keys(resultToArray).map((currentKey) => {
-      return (
-        longIdent +
-        currentKey +
-        ': ' +
-        getResultToStylish(resultToArray[currentKey], depth + 2)
-      );
+    const string = Object.keys(resultToArray).map((currentKey) => {
+      const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
+      return `${longIdent}${currentKey}: ${resultString}`;
     });
-  } else {
-    string = resultToArray.map((item) => {
-      if (typeof item === 'object') {
-        if (item.operator === '') {
-          item.operator = ' ';
-        }
-        if (!isComparisonObject(item)) {
-          return (
-            longIdent +
-            resultToArray.find((findItem) => item === findItem) +
-            ': ' +
-            getResultToStylish(item, depth + 2)
-          );
-        } else {
-          let line = `${currentIdent}${item.operator} ${item.key}: `;
-          if (Array.isArray(item.value)) {
-            return line + getResultToStylish(item.value, depth + 2);
-          } else if (typeof item.value === 'object') {
-            return line + getResultToStylish(item.value, depth + 2);
-          }
-          // if (item.value === '') {
-          //   line = line.trimEnd();
-          // }
-          return `${line}${item.value}`;
-        }
-      }
-      return `${longIdent}${item.operator} ${item.key}: ${item.value}`;
-    }, resultToArray);
+    const joinedString = string.join('\n');
+    return `{\n${joinedString}\n${lastIndent}}`;
   }
 
-  return '{\n' + string.join('\n') + `\n${lastIndent}}`;
+  const string = resultToArray.map((item) => {
+    const currentItem = item;
+    if (typeof currentItem === 'object') {
+      if (currentItem.operator === '') {
+        currentItem.operator = ' ';
+      }
+      if (!isComparisonObject(currentItem)) {
+        const filteredArray = resultToArray.find((findItem) => item === findItem);
+        const resultToStylish = getResultToStylish(currentItem, depth + 2);
+        return `${longIdent}${filteredArray}: ${resultToStylish}`;
+      }
+      const line = `${currentIdent}${currentItem.operator} ${currentItem.key}: `;
+      if (Array.isArray(currentItem.value)) {
+        return line + getResultToStylish(currentItem.value, depth + 2);
+      }
+      if (typeof currentItem.value === 'object') {
+        return line + getResultToStylish(currentItem.value, depth + 2);
+      }
+      return `${line}${currentItem.value}`;
+    }
+    return `${longIdent}${currentItem.operator} ${currentItem.key}: ${currentItem.value}`;
+  }, resultToArray);
+
+  const joinedString = string.join('\n');
+  return `{\n${joinedString}\n${lastIndent}}`;
 };
