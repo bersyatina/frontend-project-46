@@ -29,7 +29,6 @@ const getJsonData = (resultToArray, path = '') => {
         const filter = resultToArray.filter((value) => value.key === item.key);
         let operation = '';
         let value = getJsonData(item.value, newPath);
-        // console.log(Array.isArray(item.value));
         if (!Array.isArray(item.value) && typeof item.value !== 'object') {
           value = getPrimitiveValue(value);
         }
