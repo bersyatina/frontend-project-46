@@ -37,9 +37,9 @@ export const getResultToStylish = (resultToArray, depth = 1) => {
           } else if (typeof item.value === 'object') {
             return line + getResultToStylish(item.value, depth + 2);
           }
-          if (item.value === '') {
-            line = line.trimEnd();
-          }
+          // if (item.value === '') {
+          //   line = line.trimEnd();
+          // }
           return `${line}${item.value}`;
         }
       }
