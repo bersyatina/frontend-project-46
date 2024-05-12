@@ -1,5 +1,18 @@
 import { isComparisonObject } from '../parsers/parsers.js';
 
+const getPrimitiveData = (data) => {
+  switch (true) {
+    case typeof data === 'boolean'
+    || data === null
+    || typeof data === 'number'
+    || typeof data === 'undefined': return data;
+    case typeof data === 'object':
+      return '[complex value]';
+    default:
+      return `'${data}'`;
+  }
+};
+
 export const getPlainData = (resultToArray, path = '') => {
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
     return resultToArray;
@@ -46,18 +59,4 @@ export const getPlainData = (resultToArray, path = '') => {
     .join('\n');
 
   return `${result}`;
-};
-
-const getPrimitiveData = (data) => {
-  switch (true) {
-    case typeof data === 'boolean' ||
-      data === null ||
-      typeof data === 'number' ||
-      typeof data === 'undefined':
-      return data;
-    case typeof data === 'object':
-      return '[complex value]';
-    case typeof data === 'string':
-      return `'${data}'`;
-  }
 };
