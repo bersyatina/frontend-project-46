@@ -1,11 +1,11 @@
 import { isComparisonObject } from '../index.js';
 
-export const getResultToJson = (resultToArray) => {
-  return getJsonData(resultToArray);
-};
-
 const getPrimitiveValue = (value) => {
   return typeof value === 'string' ? `"${value}"` : value;
+};
+
+export const getResultToJson = (resultToArray) => {
+  return getJsonData(resultToArray);
 };
 
 const getJsonData = (resultToArray, path = '') => {
