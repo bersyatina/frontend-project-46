@@ -18,38 +18,38 @@ const getJsonData = (resultToArray, path = '') => {
       return `"${currentKey}":${resultValue}`;
     });
     return `[{${array}}]`;
-  } else {
-    const array = resultToArray.map((item) => {
-      if (isComparisonObject(item)) {
-        const newPath = `${path}.${item.key}`.replace(/^\.+/, '');
-        const filter = resultToArray.filter((value) => value.key === item.key);
-        let operation = '';
-        let value = getJsonData(item.value, newPath);
-        if (!Array.isArray(item.value) && typeof item.value !== 'object') {
-          value = getPrimitiveValue(value);
-        }
-
-        switch (item.operator) {
-          case '+':
-            operation = filter.length !== 2 ? 'added' : 'replaced';
-            break;
-          case '-':
-            operation = filter.length !== 2 ? 'removed' : 'replaced by';
-            break;
-          case ' ':
-            operation = 'no changed';
-            break;
-          case '':
-            return Object.keys(item).reduce((acc, key) => {
-              return acc + key + ': ' + item[key];
-            }, '');
-        }
-
-        return `{"path":"${newPath}","operation":"${operation}","value":${value}}`;
-      }
-    }, resultToArray);
-    return `[${array}]`;
   }
+  const array = resultToArray.map((item) => {
+    if (isComparisonObject(item)) {
+      const newPath = `${path}.${item.key}`.replace(/^\.+/, '');
+      const filter = resultToArray.filter((value) => value.key === item.key);
+      let operation = '';
+      let value = getJsonData(item.value, newPath);
+      if (!Array.isArray(item.value) && typeof item.value !== 'object') {
+        value = getPrimitiveValue(value);
+      }
+
+      switch (item.operator) {
+        case '+':
+          operation = filter.length !== 2 ? 'added' : 'replaced';
+          break;
+        case '-':
+          operation = filter.length !== 2 ? 'removed' : 'replaced by';
+          break;
+        case ' ':
+          operation = 'no changed';
+          break;
+        case '':
+          return Object.keys(item).reduce((acc, key) => {
+            return acc + key + ': ' + item[key];
+          }, '');
+      }
+
+      return `{"path":"${newPath}","operation":"${operation}","value":${value}}`;
+    }
+  }, resultToArray);
+
+  return `[${array}]`;
 };
 
 export const getResultToJson = (resultToArray) => getJsonData(resultToArray);
