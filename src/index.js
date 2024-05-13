@@ -19,17 +19,14 @@ const getComparisonArray = (contentToArray) => contentToArray.reduce((acc, curre
   return [...acc, currentValue];
 }, []);
 
-const isKeyExistsInOneArray = (
-  fileKey, firstArray, secondArray
-) => firstArray[fileKey] !== undefined && secondArray[fileKey] === undefined;
+const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => firstArray[fileKey]
+  !== undefined && secondArray[fileKey] === undefined;
 
-const isKeyExistsInArrays = (
-  fileKey, firstArray, secondArray
-) => firstArray[fileKey] !== undefined && secondArray[fileKey] !== undefined;
+const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fileKey]
+  !== undefined && secondArray[fileKey] !== undefined;
 
-const isKeyNotExistsInArrays = (
-  fileKey, firstArray, secondArray
-) => typeof firstArray[fileKey] !== 'object' || typeof secondArray[fileKey] !== 'object';
+const isKeyNotExistsInArrays = (fileKey, firstArray, secondArray) => typeof firstArray[fileKey]
+  !== 'object' || typeof secondArray[fileKey] !== 'object';
 
 const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   if (isKeyExistsInArrays(fileKey, firstContentToArray, secondContentToArray)) {
@@ -86,9 +83,9 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   return {};
 };
 
-export const generateKeys = (
-  firsObj, secondObj
-) => _.sortBy(Object.keys({ ...firsObj, ...secondObj }));
+export const generateKeys = (firsObj, secondObj) => _.sortBy(Object.keys({
+  ...firsObj, ...secondObj
+}));
 
 const formatContent = (resultContent, format = 'stylish') => {
   switch (format) {
