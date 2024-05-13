@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import _ from "lodash";
+import _ from 'lodash';
 import parsers from './parsers/parsers.js';
 import getResultToStylish from './formatters/stylish.js';
 import getResultToJson from './formatters/json.js';
@@ -14,13 +14,22 @@ const getFileData = (filepath) => [
 
 const getComparisonArray = (contentToArray) => contentToArray.reduce((acc, currentValue) => {
   if (currentValue.operator === 'comparisonObject') {
-    acc = [...acc, currentValue.value[0]];
-    acc = [...acc, currentValue.value[1]];
-    return acc;
+    return [...acc, currentValue.value[0], currentValue.value[1]];
   }
-  acc = [...acc, currentValue];
-  return acc;
+  return [...acc, currentValue];
 }, []);
+
+const isKeyExistsInOneArray = (
+  fileKey, firstArray, secondArray
+) => firstArray[fileKey] !== undefined && secondArray[fileKey] === undefined;
+
+const isKeyExistsInArrays = (
+  fileKey, firstArray, secondArray
+) => firstArray[fileKey] !== undefined && secondArray[fileKey] !== undefined;
+
+const isKeyNotExistsInArrays = (
+  fileKey, firstArray, secondArray
+) => typeof firstArray[fileKey] !== 'object' || typeof secondArray[fileKey] !== 'object';
 
 const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   if (isKeyExistsInArrays(fileKey, firstContentToArray, secondContentToArray)) {
@@ -77,8 +86,9 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   return {};
 };
 
-export const generateKeys = (firsObj, secondObj) =>
-  _.sortBy(Object.keys({...firsObj, ...secondObj}));
+export const generateKeys = (
+  firsObj, secondObj
+) => _.sortBy(Object.keys({ ...firsObj, ...secondObj }));
 
 const formatContent = (resultContent, format = 'stylish') => {
   switch (format) {
@@ -92,6 +102,11 @@ const formatContent = (resultContent, format = 'stylish') => {
       throw new Error(`The format is not defined: ${format}`);
   }
 };
+
+const isValidObject = (fileKey, firstValue, secondValue) => firstValue[fileKey] !== undefined
+  && secondValue[fileKey] !== undefined
+  && typeof firstValue[fileKey] === 'object'
+  && typeof secondValue[fileKey] === 'object';
 
 const getResultToArray = (
   filesKeys,
@@ -139,18 +154,3 @@ export default (firstPath, secondPath, formatName = 'stylish') => {
   );
   return formatContent(resultToArray, formatName);
 };
-
-const isValidObject = (fileKey, firstValue, secondValue) =>
-  firstValue[fileKey] !== undefined
-  && secondValue[fileKey] !== undefined
-  && typeof firstValue[fileKey] === 'object'
-  && typeof secondValue[fileKey] === 'object';
-
-const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) =>
-  firstArray[fileKey] !== undefined && secondArray[fileKey] === undefined;
-
-const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fileKey] !== undefined
-  && secondArray[fileKey] !== undefined;
-
-const isKeyNotExistsInArrays = (fileKey, firstArray, secondArray) =>
-  typeof firstArray[fileKey] !== 'object' || typeof secondArray[fileKey] !== 'object';
