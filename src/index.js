@@ -4,6 +4,7 @@ import parsers from './parsers/parsers.js';
 import getResultToStylish from './formatters/stylish.js';
 import getResultToJson from './formatters/json.js';
 import getPlainData from './formatters/plain.js';
+import _ from "lodash";
 
 const getFileData = (filepath) => {
   return [
@@ -26,7 +27,7 @@ export default (firstPath, secondPath, formatName = 'stylish') => {
     firstContentToArray,
     secondContentToArray,
   );
-  return format(resultToArray, formatName);
+  return formatContent(resultToArray, formatName);
 };
 
 const getResultToArray = (
@@ -59,6 +60,15 @@ const getResultToArray = (
   });
   return getComparisonArray(result);
 };
+
+const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => firstArray[fileKey] !== undefined
+  && secondArray[fileKey] === undefined;
+
+const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fileKey] !== undefined
+  && secondArray[fileKey] !== undefined;
+
+const isKeyNotExistsInArrays = (fileKey, firstArray, secondArray) => typeof firstArray[fileKey] !== 'object'
+  || typeof secondArray[fileKey] !== 'object';
 
 const getComparisonArray = (contentToArray) => {
   return contentToArray.reduce((acc, currentValue) => {
@@ -134,30 +144,9 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   return {};
 };
 
-const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => {
-  return (
-    firstArray[fileKey] !== undefined && secondArray[fileKey] === undefined
-  );
-};
+export const generateKeys = (firsObj, secondObj) => _.sortBy(Object.keys({ ...firsObj, ...secondObj }));
 
-const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => {
-  return (
-    firstArray[fileKey] !== undefined && secondArray[fileKey] !== undefined
-  );
-};
-
-const isKeyNotExistsInArrays = (fileKey, firstArray, secondArray) => {
-  return (
-    typeof firstArray[fileKey] !== 'object' ||
-    typeof secondArray[fileKey] !== 'object'
-  );
-};
-
-export const generateKeys = (firsObj, secondObj) => {
-  return Object.keys({ ...firsObj, ...secondObj }).sort();
-};
-
-const format = (resultContent, format = 'stylish') => {
+const formatContent = (resultContent, format = 'stylish') => {
   switch (format) {
     case 'stylish':
       return getResultToStylish(resultContent);
