@@ -1,10 +1,11 @@
-import {describe, expect, it, test} from '@jest/globals';
+import {
+  describe, expect, it, test,
+} from '@jest/globals';
 import fs from 'fs';
 import * as index from '../src/index.js';
 import getDiffFiles from '../src/index.js';
 
-const readFixtureFile = (filename) =>
-  fs.readFileSync(`__fixtures__/${filename}`, 'utf8');
+const readFixtureFile = (filename) => fs.readFileSync(`__fixtures__/${filename}`, 'utf8');
 
 test('generateKeys', () => {
   expect(
@@ -46,7 +47,7 @@ const testCases = [
 describe('getDiffFiles', () => {
   testCases.forEach((testCase) => {
     it(`${testCase.name}`, () => {
-      const {inputFiles, expected} = testCase;
+      const { inputFiles, expected } = testCase;
       Object.keys(expected).forEach((format) => {
         const actualResult = getDiffFiles(...inputFiles, format);
         expect(actualResult).toBe(expected[format]);
