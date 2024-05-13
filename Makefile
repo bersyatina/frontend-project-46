@@ -5,6 +5,7 @@ gendiff -h:
 	node gendiff -h
 
 lint:
+    npm init @eslint/config
 	npx eslint .
 
 test:

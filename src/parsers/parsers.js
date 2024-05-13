@@ -8,7 +8,6 @@ export const isComparisonObject = (object) => object.key !== undefined
 const getContentFile = (content, extension) => {
   switch (extension) {
     case '.json':
-      // eslint-disable-next-line no-fallthrough
       return json(content);
     case '.yml':
     case '.yaml':
