@@ -1,4 +1,5 @@
 import { isComparisonObject } from '../parsers/parsers.js';
+import { EOL } from 'os';
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
@@ -30,14 +31,12 @@ const getResultToStylish = (resultToArray, depth = 1) => {
         return `${longIdent}${filteredArray}: ${resultToStylish}`;
       }
       const line = `${currentIdent}${currentOperator} ${currentItem.key}: `;
-      if (Array.isArray(currentItem.value)) {
-        return line + getResultToStylish(currentItem.value, depth + 2);
-      }
+
       if (typeof currentItem.value === 'object') {
         return line + getResultToStylish(currentItem.value, depth + 2);
       }
-      const newLine = item.value === '' ? line.trimEnd() : line;
-      return `${newLine}${currentItem.value}`;
+      
+      return `${line}${currentItem.value}`;
     }
 
     return `${longIdent}${currentOperator} ${currentItem.key}: ${currentItem.value}`;
