@@ -36,7 +36,8 @@ const getResultToStylish = (resultToArray, depth = 1) => {
       if (typeof currentItem.value === 'object') {
         return line + getResultToStylish(currentItem.value, depth + 2);
       }
-      return `${line}${currentItem.value}`;
+      const newLine = item.value === '' ? line.trimEnd() : line;
+      return `${newLine}${currentItem.value}`;
     }
 
     return `${longIdent}${currentOperator} ${currentItem.key}: ${currentItem.value}`;
