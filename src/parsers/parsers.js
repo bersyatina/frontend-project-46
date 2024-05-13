@@ -1,9 +1,11 @@
-import json from '../parsers/json.js';
 import yaml from 'js-yaml';
+import json from '../parsers/json.js';
 
-export default (fileContent) => {
-  return getContentFile(fileContent[0], fileContent[1]);
-};
+export default (fileContent) => getContentFile(fileContent[0], fileContent[1]);
+
+export const isComparisonObject = (object) => object.key !== undefined
+  && object.operator !== undefined
+  && object.value !== undefined;
 
 const getContentFile = (content, extension) => {
   switch (extension) {
@@ -16,12 +18,4 @@ const getContentFile = (content, extension) => {
     default:
       throw new Error(`unknown file extension: ${extension}`);
   }
-};
-
-export const isComparisonObject = (object) => {
-  return (
-    object.key !== undefined &&
-    object.operator !== undefined &&
-    object.value !== undefined
-  );
 };

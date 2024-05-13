@@ -1,3 +1,1 @@
-export default (fileContent) => {
-  return JSON.parse(fileContent);
-};
+export default (fileContent) => JSON.parse(fileContent);

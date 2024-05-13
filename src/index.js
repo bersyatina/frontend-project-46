@@ -84,7 +84,7 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
 };
 
 export const generateKeys = (firsObj, secondObj) => _.sortBy(Object.keys({
-  ...firsObj, ...secondObj
+  ...firsObj, ...secondObj,
 }));
 
 const formatContent = (resultContent, format = 'stylish') => {
