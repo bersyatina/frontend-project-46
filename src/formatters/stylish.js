@@ -35,7 +35,7 @@ const getResultToStylish = (resultToArray, depth = 1) => {
         return line + getResultToStylish(currentItem.value, depth + 2);
       }
       
-      return `${line}${currentItem.value}`;
+      return line + currentItem.value;
     }
 
     return `${longIdent}${currentOperator} ${currentItem.key}: ${currentItem.value}`;
