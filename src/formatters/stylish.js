@@ -34,7 +34,6 @@ const getResultToStylish = (resultToArray, depth = 1) => {
       if (typeof currentItem.value === 'object') {
         return line + getResultToStylish(currentItem.value, depth + 2);
       }
-      
       return line + currentItem.value;
     }
 
