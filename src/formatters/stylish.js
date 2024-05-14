@@ -9,17 +9,17 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   }
 
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
-    // eslint-disable-next-line no-undef
+    // eslint-disable-next-line no-use-before-define
     return getResultOfObject(resultToArray, depth, longIdent, lastIndent);
   }
-  // eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-use-before-define
   const string = resultToArray.map((item) => getResultString(
-      item,
-      resultToArray,
-      longIdent,
-      currentIdent,
-      depth,
-    ), resultToArray);
+    item,
+    resultToArray,
+    longIdent,
+    currentIdent,
+    depth,
+  ), resultToArray);
 
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
