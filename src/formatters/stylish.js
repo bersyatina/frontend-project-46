@@ -12,9 +12,12 @@ const getResultToStylish = (resultToArray, depth = 1) => {
     return getResultOfObject(resultToArray, depth, longIdent, lastIndent);
   }
 
-  const string = resultToArray.map((item) => getResultString(
-    item, resultToArray, longIdent, currentIdent, depth
-  ), resultToArray);
+  const string = resultToArray
+    .map((item) => getResultString(item, 
+      resultToArray, 
+      longIdent,
+      currentIdent,
+      depth), resultToArray);
 
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
