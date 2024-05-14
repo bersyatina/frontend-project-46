@@ -13,11 +13,13 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   }
 
   const string = resultToArray
-    .map((item) => getResultString(item, 
+    .map((item) => getResultString(
+      item, 
       resultToArray, 
       longIdent,
       currentIdent,
-      depth), resultToArray);
+      depth,
+    ), resultToArray);
 
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
