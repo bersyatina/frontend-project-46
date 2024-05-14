@@ -33,7 +33,6 @@ const getJsonData = (resultToArray, path = '') => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
     return resultToArray;
   }
-  
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
     const array = Object.keys(resultToArray).map((currentKey) => {
       const value = getJsonData(resultToArray[currentKey], path);

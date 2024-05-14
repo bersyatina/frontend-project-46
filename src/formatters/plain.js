@@ -23,7 +23,7 @@ const setRemovedOrUpdatedString = (resultToArray, item, filter, res) => {
   );
   const primitiveItem = getPrimitiveData(item.value);
   return `Property ${res} was updated. From ${primitiveItem} to ${nextValue}`;
-}
+};
 
 const getPlainData = (resultToArray, path = '') => {
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
@@ -37,14 +37,16 @@ const getPlainData = (resultToArray, path = '') => {
         const filter = resultToArray.filter(
           (value) => value.key === item.key,
         );
+        const resultValue = getPrimitiveData(item.value);
         switch (true) {
-          case item.operator === '+' && filter.length !== 2:
-            const resultValue = getPrimitiveData(item.value);
+          case (item.operator === '+' && filter.length !== 2):
             return `Property ${res} was added with value: ${resultValue}`;
           case item.operator === '-':
             return setRemovedOrUpdatedString(resultToArray, item, filter, res);
-          case item.operator === ' ' && typeof item.value === 'object':
-            return getPlainData(item.value, trimmedPath);            
+          case (item.operator === ' ' && typeof item.value === 'object'):
+            return getPlainData(item.value, trimmedPath);
+          default:
+            break;
         }
       }
       return '';
