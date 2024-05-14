@@ -1,5 +1,25 @@
 import { isComparisonObject } from '../parsers/parsers.js';
 
+const getResultToStylish = (resultToArray, depth = 1) => {
+  const currentIdent = '  '.repeat(depth);
+  const longIdent = '  '.repeat(depth + 1);
+  const lastIndent = '  '.repeat(depth - 1);
+  if (typeof resultToArray !== 'object' || resultToArray === null) {
+    return resultToArray;
+  }
+
+  if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
+    return getResultOfObject(resultToArray, depth, longIdent, lastIndent);
+  }
+
+  const string = resultToArray.map((item) => {
+    return getResultString(item, resultToArray, longIdent, currentIdent, depth);
+  }, resultToArray);
+
+  const joinedString = string.join('\n');
+  return `{\n${joinedString}\n${lastIndent}}`;
+};
+
 const getResultOfObject = (resultToArray, depth, longIdent, lastIndent) => {
   const string = Object.keys(resultToArray).map((currentKey) => {
     const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
@@ -7,7 +27,7 @@ const getResultOfObject = (resultToArray, depth, longIdent, lastIndent) => {
   });
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
-}
+};
 
 const getResultString = (item, resultToArray, longIdent, currentIdent, depth) => {
   const currentItem = item;
@@ -30,25 +50,5 @@ const getResultString = (item, resultToArray, longIdent, currentIdent, depth) =>
 
   return `${longIdent}${currentOperator} ${currentItem.key}: ${currentItem.value}`;
 }
-
-const getResultToStylish = (resultToArray, depth = 1) => {
-  const currentIdent = '  '.repeat(depth);
-  const longIdent = '  '.repeat(depth + 1);
-  const lastIndent = '  '.repeat(depth - 1);
-  if (typeof resultToArray !== 'object' || resultToArray === null) {
-    return resultToArray;
-  }
-
-  if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
-    return getResultOfObject(resultToArray, depth, longIdent, lastIndent);
-  }
-
-  const string = resultToArray.map((item) => {
-    return getResultString(item, resultToArray, longIdent, currentIdent, depth);
-  }, resultToArray);
-
-  const joinedString = string.join('\n');
-  return `{\n${joinedString}\n${lastIndent}}`;
-};
 
 export default getResultToStylish;

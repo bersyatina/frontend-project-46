@@ -42,7 +42,7 @@ const getPlainData = (resultToArray, path = '') => {
         }
 
         if (item.operator === ' ' && typeof item.value === 'object') {
-            return getPlainData(item.value, trimmedPath);
+          return getPlainData(item.value, trimmedPath);
         }
       }
       return '';

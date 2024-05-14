@@ -13,7 +13,7 @@ const setOperation = (operator, filter) => {
     return filter.length !== 2 ? 'removed' : 'replaced by';
   }
   return 'no changed';
-}
+};
 
 const getJsonData = (resultToArray, path = '') => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
@@ -36,7 +36,6 @@ const getJsonData = (resultToArray, path = '') => {
     const resultValue = !Array.isArray(item.value) && typeof item.value !== 'object'
       ? getPrimitiveValue(value)
       : value;
-    
     const operation = setOperation(item.operator, filter);
     return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
   }, resultToArray);
