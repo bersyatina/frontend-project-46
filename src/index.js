@@ -28,57 +28,27 @@ const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fil
 const isKeyNotExistsInArrays = (fileKey, firstArray, secondArray) => typeof firstArray[fileKey]
   !== 'object' || typeof secondArray[fileKey] !== 'object';
 
+const setComparisonObject = (operator, key, value) => {
+  return { operator, key, value }
+}
+
 const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   if (isKeyExistsInArrays(fileKey, firstContentToArray, secondContentToArray)) {
-    if (
-      isKeyNotExistsInArrays(fileKey, firstContentToArray, secondContentToArray)
-    ) {
+    if (isKeyNotExistsInArrays(fileKey, firstContentToArray, secondContentToArray)) {
       return firstContentToArray[fileKey] === secondContentToArray[fileKey]
-        ? {
-          operator: ' ',
-          key: fileKey,
-          value: firstContentToArray[fileKey],
-        }
-        : {
-          operator: 'comparisonObject',
-          key: fileKey,
-          value: [
-            {
-              operator: '-',
-              key: fileKey,
-              value: firstContentToArray[fileKey],
-            },
-            {
-              operator: '+',
-              key: fileKey,
-              value: secondContentToArray[fileKey],
-            },
-          ],
-        };
+        ? setComparisonObject(' ', fileKey, firstContentToArray[fileKey])
+        : setComparisonObject('comparisonObject', fileKey, [
+          setComparisonObject('-', fileKey, firstContentToArray[fileKey]),
+          setComparisonObject('+', fileKey, secondContentToArray[fileKey])
+        ]);
     }
-    return {
-      operator: ' ',
-      key: fileKey,
-      value: firstContentToArray[fileKey],
-    };
+    return setComparisonObject(' ', fileKey, firstContentToArray[fileKey]);
   }
-  if (
-    isKeyExistsInOneArray(fileKey, firstContentToArray, secondContentToArray)
-  ) {
-    return {
-      operator: '-',
-      key: fileKey,
-      value: firstContentToArray[fileKey],
-    };
+  if (isKeyExistsInOneArray(fileKey, firstContentToArray, secondContentToArray)) {
+    return setComparisonObject('-', fileKey, firstContentToArray[fileKey]);
   }
-  if (
-    isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)
-  ) {
-    return {
-      operator: '+',
-      key: fileKey,
-      value: secondContentToArray[fileKey],
-    };
+  if (isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)) {
+    return setComparisonObject('+', fileKey, secondContentToArray[fileKey]);
   }
   return {};
 };
@@ -121,15 +91,11 @@ const getResultToArray = (
         firstContentToArray,
         secondContentToArray,
       );
-      return {
-        operator: comparison.operator,
-        key: comparison.key,
-        value: getResultToArray(
-          arrayKeys,
-          firstContentToArray[fileKey],
-          secondContentToArray[fileKey],
-        ),
-      };
+      return setComparisonObject(comparison.operator, comparison.key, getResultToArray(
+        arrayKeys,
+        firstContentToArray[fileKey],
+        secondContentToArray[fileKey],
+      ));
     }
     return getComparison(fileKey, firstContentToArray, secondContentToArray);
   });

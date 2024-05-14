@@ -5,6 +5,16 @@ const getPrimitiveValue = (value) => {
   return value;
 };
 
+const setOperation = (operator, filter) => {
+  if (operator === '+') {
+    return filter.length !== 2 ? 'added' : 'replaced';
+  }
+  if (operator === '-') {
+    return filter.length !== 2 ? 'removed' : 'replaced by';
+  }
+  return 'no changed';
+}
+
 const getJsonData = (resultToArray, path = '') => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
     return resultToArray;
@@ -26,16 +36,8 @@ const getJsonData = (resultToArray, path = '') => {
     const resultValue = !Array.isArray(item.value) && typeof item.value !== 'object'
       ? getPrimitiveValue(value)
       : value;
-
-    if (item.operator === '+') {
-      const operation = filter.length !== 2 ? 'added' : 'replaced';
-      return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
-    }
-    if (item.operator === '-') {
-      const operation = filter.length !== 2 ? 'removed' : 'replaced by';
-      return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
-    }
-    const operation = 'no changed';
+    
+    const operation = setOperation(item.operator, filter);
     return `{"path":"${newPath}","operation":"${operation}","value":${resultValue}}`;
   }, resultToArray);
 
