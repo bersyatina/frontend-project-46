@@ -13,6 +13,18 @@ const getPrimitiveData = (data) => {
   }
 };
 
+const setRemovedOrUpdatedString = (resultToArray, item, filter, res) => {
+  if (filter.length !== 2) {
+    return `Property ${res} was removed`;
+  }
+  const nextItem = resultToArray.findIndex((findItem) => findItem === item) + 1;
+  const nextValue = getPrimitiveData(
+    resultToArray[nextItem].value,
+  );
+  const primitiveItem = getPrimitiveData(item.value);
+  return `Property ${res} was updated. From ${primitiveItem} to ${nextValue}`;
+}
+
 const getPlainData = (resultToArray, path = '') => {
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
     return resultToArray;
@@ -25,24 +37,14 @@ const getPlainData = (resultToArray, path = '') => {
         const filter = resultToArray.filter(
           (value) => value.key === item.key,
         );
-        if (item.operator === '+' && filter.length !== 2) {
-          const resultValue = getPrimitiveData(item.value);
-          return `Property ${res} was added with value: ${resultValue}`;
-        }
-        if (item.operator === '-') {
-          if (filter.length !== 2) {
-            return `Property ${res} was removed`;
-          }
-          const nextItem = resultToArray.findIndex((findItem) => findItem === item) + 1;
-          const nextValue = getPrimitiveData(
-            resultToArray[nextItem].value,
-          );
-          const primitiveItem = getPrimitiveData(item.value);
-          return `Property ${res} was updated. From ${primitiveItem} to ${nextValue}`;
-        }
-
-        if (item.operator === ' ' && typeof item.value === 'object') {
-          return getPlainData(item.value, trimmedPath);
+        switch (true) {
+          case item.operator === '+' && filter.length !== 2:
+            const resultValue = getPrimitiveData(item.value);
+            return `Property ${res} was added with value: ${resultValue}`;
+          case item.operator === '-':
+            return setRemovedOrUpdatedString(resultToArray, item, filter, res);
+          case item.operator === ' ' && typeof item.value === 'object':
+            return getPlainData(item.value, trimmedPath);            
         }
       }
       return '';

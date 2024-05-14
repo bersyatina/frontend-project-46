@@ -51,7 +51,6 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   if (isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)) {
     return setComparisonObject('+', fileKey, secondContentToArray[fileKey]);
   }
-  return {};
 };
 
 export const generateKeys = (firsObj, secondObj) => _.sortBy(Object.keys({

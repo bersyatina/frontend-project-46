@@ -39,21 +39,19 @@ const getResultString = (item, resultToArray, longIdent, currentIdent, depth) =>
   const currentOperator = currentItem.operator === ''
     ? ' '
     : currentItem.operator;
-  if (typeof currentItem === 'object') {
-    if (!isComparisonObject(currentItem)) {
-      const filteredArray = resultToArray.find((findItem) => item === findItem);
-      const resultToStylish = getResultToStylish(currentItem, depth + 2);
-      return `${longIdent}${filteredArray}: ${resultToStylish}`;
-    }
-    const line = `${currentIdent}${currentOperator} ${currentItem.key}: `;
-
-    if (typeof currentItem.value === 'object') {
-      return line + getResultToStylish(currentItem.value, depth + 2);
-    }
-    return line + currentItem.value;
+  
+  if (!isComparisonObject(currentItem)) {
+    const filteredArray = resultToArray.find((findItem) => item === findItem);
+    const resultToStylish = getResultToStylish(currentItem, depth + 2);
+    return `${longIdent}${filteredArray}: ${resultToStylish}`;
   }
-
-  return `${longIdent}${currentOperator} ${currentItem.key}: ${currentItem.value}`;
+  
+  const line = `${currentIdent}${currentOperator} ${currentItem.key}: `;
+  if (typeof currentItem.value === 'object') {
+    return line + getResultToStylish(currentItem.value, depth + 2);
+  }
+  
+  return line + currentItem.value;
 };
 
 export default getResultToStylish;
