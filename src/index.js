@@ -29,11 +29,8 @@ const isKeyNotExistsInArrays = (fileKey, firstArray, secondArray) => typeof firs
   !== 'object' || typeof secondArray[fileKey] !== 'object';
 
 const setComparisonObject = (operator, key, value) => {
-  const newComparisonObject = {};
-  newComparisonObject.operator = operator;
-  newComparisonObject.key = key;
-  newComparisonObject.value = value;
-  return newComparisonObject;
+  const newComparisonObject = { operator, key, value };
+  return { ...newComparisonObject };
 };
 
 const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {

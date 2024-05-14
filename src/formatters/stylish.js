@@ -14,8 +14,8 @@ const getResultToStylish = (resultToArray, depth = 1) => {
 
   const string = resultToArray
     .map((item) => getResultString(
-      item, 
-      resultToArray, 
+      item,
+      resultToArray,
       longIdent,
       currentIdent,
       depth,
