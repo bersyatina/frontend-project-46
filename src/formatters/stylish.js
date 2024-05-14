@@ -9,11 +9,11 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   }
 
   if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
+    // eslint-disable-next-line no-undef
     return getResultOfObject(resultToArray, depth, longIdent, lastIndent);
   }
-
-  const string = resultToArray
-    .map((item) => getResultString(
+  // eslint-disable-next-line no-undef
+  const string = resultToArray.map((item) => getResultString(
       item,
       resultToArray,
       longIdent,
