@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers/parsers.js';
-import formatter from "./formatters/formatter.js";
+import formatter from './formatters/formatter.js';
 
 const getFileData = (filepath) => [
   // eslint-disable-next-line no-undef
@@ -23,15 +23,15 @@ const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => firstArray[f
 const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fileKey]
   !== undefined && secondArray[fileKey] !== undefined;
 
-const isValueNotPlainObject = (fileKey, firstArray, secondArray) => !_.isPlainObject(firstArray[fileKey])
-  || !_.isPlainObject(secondArray[fileKey]);
+const isValueNotPlainObject = (
+  fileKey, firstArray, secondArray
+) => !_.isPlainObject(firstArray[fileKey]) || !_.isPlainObject(secondArray[fileKey]);
 
 const setComparisonObject = (operation, key, value) => ({ operation, key, value });
 
 const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
   const valueFirst = firstContentToArray[fileKey];
   const valueSecond = secondContentToArray[fileKey];
-  
   if (isKeyExistsInArrays(fileKey, firstContentToArray, secondContentToArray)) {
     if (isValueNotPlainObject(fileKey, firstContentToArray, secondContentToArray)) {
       const removeObj = setComparisonObject('deleted', fileKey, valueFirst);
@@ -39,9 +39,8 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
       const oldObject = setComparisonObject('same', fileKey, valueFirst);
       const compObj = setComparisonObject('comparisonObject', fileKey, [
         removeObj,
-        addedObj
+        addedObj,
       ]);
-      
       return valueFirst === valueSecond ? oldObject : compObj;
     }
     return setComparisonObject('same', fileKey, valueFirst);

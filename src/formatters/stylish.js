@@ -1,5 +1,5 @@
 import { isComparisonObject } from '../parsers/parsers.js';
-import {setOperator} from "../index.js";
+import { setOperator } from '../index.js';
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);

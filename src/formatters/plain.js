@@ -1,7 +1,6 @@
 import { isComparisonObject } from '../parsers/parsers.js';
 
 const getPrimitiveData = (data) => {
-  
   switch (true) {
     case typeof data === 'string':
       return `'${data}'`;
