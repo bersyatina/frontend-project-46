@@ -1,4 +1,5 @@
 import { isComparisonObject } from '../parsers/parsers.js';
+import {setOperator} from "../index.js";
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
@@ -36,9 +37,9 @@ const getResultOfObject = (resultToArray, depth, longIdent, lastIndent) => {
 
 const getResultString = (item, resultToArray, longIdent, currentIdent, depth) => {
   const currentItem = item;
-  const currentOperator = currentItem.operator === ''
+  const currentOperator = currentItem.operation === ''
     ? ' '
-    : currentItem.operator;
+    : setOperator(currentItem.operation);
   if (!isComparisonObject(currentItem)) {
     const filteredArray = resultToArray.find((findItem) => item === findItem);
     const resultToStylish = getResultToStylish(currentItem, depth + 2);

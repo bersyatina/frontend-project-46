@@ -2,7 +2,7 @@ import yaml from 'js-yaml';
 import json from './json.js';
 
 export const isComparisonObject = (object) => object.key !== undefined
-  && object.operator !== undefined
+  && object.operation !== undefined
   && object.value !== undefined;
 
 const getContentFile = (content, extension) => {

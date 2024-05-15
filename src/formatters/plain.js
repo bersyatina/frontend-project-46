@@ -1,15 +1,14 @@
 import { isComparisonObject } from '../parsers/parsers.js';
 
 const getPrimitiveData = (data) => {
+  
   switch (true) {
-    case typeof data === 'boolean'
-    || data === null
-    || typeof data === 'number'
-    || typeof data === 'undefined': return data;
-    case typeof data === 'object':
+    case typeof data === 'string':
+      return `'${data}'`;
+    case data instanceof Object:
       return '[complex value]';
     default:
-      return `'${data}'`;
+      return data;
   }
 };
 
@@ -26,9 +25,6 @@ const setRemovedOrUpdatedString = (resultToArray, item, filter, res) => {
 };
 
 const getPlainData = (resultToArray, path = '') => {
-  if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
-    return resultToArray;
-  }
   const result = resultToArray
     .map((item) => {
       if (isComparisonObject(item)) {
@@ -39,11 +35,11 @@ const getPlainData = (resultToArray, path = '') => {
         );
         const resultValue = getPrimitiveData(item.value);
         switch (true) {
-          case (item.operator === '+' && filter.length !== 2):
+          case (item.operation === 'added' && filter.length !== 2):
             return `Property ${res} was added with value: ${resultValue}`;
-          case item.operator === '-':
+          case item.operation === 'deleted':
             return setRemovedOrUpdatedString(resultToArray, item, filter, res);
-          case (item.operator === ' ' && typeof item.value === 'object'):
+          case (item.operation === 'same' && typeof item.value === 'object'):
             return getPlainData(item.value, trimmedPath);
           default:
             break;
