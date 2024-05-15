@@ -24,7 +24,9 @@ const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fil
   !== undefined && secondArray[fileKey] !== undefined;
 
 const isValueNotPlainObject = (
-  fileKey, firstArray, secondArray
+  fileKey,
+  firstArray,
+  secondArray,
 ) => !_.isPlainObject(firstArray[fileKey]) || !_.isPlainObject(secondArray[fileKey]);
 
 const setComparisonObject = (operation, key, value) => ({ operation, key, value });
