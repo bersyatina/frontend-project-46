@@ -1,5 +1,6 @@
 import { isComparisonObject } from '../parsers/parsers.js';
 import { setOperator } from '../index.js';
+import _ from 'lodash';
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
@@ -9,24 +10,22 @@ const getResultToStylish = (resultToArray, depth = 1) => {
     return resultToArray;
   }
 
-  if (typeof resultToArray === 'object' && !Array.isArray(resultToArray)) {
-    // eslint-disable-next-line no-use-before-define
-    return getResultOfObject(resultToArray, depth, longIdent, lastIndent);
+  const relatedData = { depth, longIdent, lastIndent, currentIdent };
+  if (_.isPlainObject(resultToArray)) {
+    return getResultOfObject(resultToArray, relatedData);
   }
-  // eslint-disable-next-line no-use-before-define
   const string = resultToArray.map((item) => getResultString(
     item,
     resultToArray,
-    longIdent,
-    currentIdent,
-    depth,
+    relatedData,
   ), resultToArray);
 
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
 };
 
-const getResultOfObject = (resultToArray, depth, longIdent, lastIndent) => {
+const getResultOfObject = (resultToArray, relatedData) => {
+  const {depth, longIdent, lastIndent} = relatedData;
   const string = Object.keys(resultToArray).map((currentKey) => {
     const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
     return `${longIdent}${currentKey}: ${resultString}`;
@@ -35,7 +34,8 @@ const getResultOfObject = (resultToArray, depth, longIdent, lastIndent) => {
   return `{\n${joinedString}\n${lastIndent}}`;
 };
 
-const getResultString = (item, resultToArray, longIdent, currentIdent, depth) => {
+const getResultString = (item, resultToArray, relatedData) => {
+  const { longIdent, currentIdent, depth } = relatedData;
   const currentItem = item;
   const currentOperator = currentItem.operation === ''
     ? ' '

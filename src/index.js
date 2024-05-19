@@ -3,9 +3,9 @@ import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers/parsers.js';
 import formatter from './formatters/formatter.js';
+import * as process from 'process';
 
-const getFileData = (filepath) => [
-  // eslint-disable-next-line no-undef
+export const getFileData = (filepath) => [
   fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8'),
   path.extname(filepath),
 ];
@@ -31,11 +31,11 @@ const isValueNotPlainObject = (
 
 const setComparisonObject = (operation, key, value) => ({ operation, key, value });
 
-const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
-  const valueFirst = firstContentToArray[fileKey];
-  const valueSecond = secondContentToArray[fileKey];
-  if (isKeyExistsInArrays(fileKey, firstContentToArray, secondContentToArray)) {
-    if (isValueNotPlainObject(fileKey, firstContentToArray, secondContentToArray)) {
+const getComparison = (fileKey, firstContent, secondContent) => {
+  const valueFirst = firstContent[fileKey];
+  const valueSecond = secondContent[fileKey];
+  if (isKeyExistsInArrays(fileKey, firstContent, secondContent)) {
+    if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
       const removeObj = setComparisonObject('deleted', fileKey, valueFirst);
       const addedObj = setComparisonObject('added', fileKey, valueSecond);
       const oldObject = setComparisonObject('same', fileKey, valueFirst);
@@ -47,10 +47,10 @@ const getComparison = (fileKey, firstContentToArray, secondContentToArray) => {
     }
     return setComparisonObject('same', fileKey, valueFirst);
   }
-  if (isKeyExistsInOneArray(fileKey, firstContentToArray, secondContentToArray)) {
+  if (isKeyExistsInOneArray(fileKey, firstContent, secondContent)) {
     return setComparisonObject('deleted', fileKey, valueFirst);
   }
-  if (isKeyExistsInOneArray(fileKey, secondContentToArray, firstContentToArray)) {
+  if (isKeyExistsInOneArray(fileKey, secondContent, firstContent)) {
     return setComparisonObject('added', fileKey, valueSecond);
   }
   return {};
@@ -60,34 +60,18 @@ export const generateKeys = (firsObj, secondObj) => _.sortBy(Object.keys({
   ...firsObj, ...secondObj,
 }));
 
-const isValidObject = (fileKey, firstValue, secondValue) => firstValue[fileKey] !== undefined
-  && secondValue[fileKey] !== undefined
-  && typeof firstValue[fileKey] === 'object'
-  && typeof secondValue[fileKey] === 'object';
-
-const getResultToArray = (
-  filesKeys,
-  firstContentToArray,
-  secondContentToArray,
-) => {
+const getResultToArray = (filesKeys, firstContent, secondContent) => {
   const result = filesKeys.map((fileKey) => {
-    if (isValidObject(fileKey, firstContentToArray, secondContentToArray)) {
-      const arrayKeys = generateKeys(
-        firstContentToArray[fileKey],
-        secondContentToArray[fileKey],
-      );
-      const comparison = getComparison(
-        fileKey,
-        firstContentToArray,
-        secondContentToArray,
-      );
-      return setComparisonObject(comparison.operation, comparison.key, getResultToArray(
-        arrayKeys,
-        firstContentToArray[fileKey],
-        secondContentToArray[fileKey],
-      ));
+    if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
+      return getComparison(fileKey, firstContent, secondContent);
     }
-    return getComparison(fileKey, firstContentToArray, secondContentToArray);
+    const arrayKeys = generateKeys(firstContent[fileKey],secondContent[fileKey]);
+    const comparison = getComparison(fileKey, firstContent, secondContent);
+    return setComparisonObject(
+      comparison.operation,
+      comparison.key,
+      getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey],
+    ));    
   });
   return getComparisonArray(result);
 };
@@ -96,16 +80,12 @@ export default (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
   const secondContent = getFileData(secondPath);
 
-  const firstContentToArray = getParseData(firstContent);
-  const secondContentToArray = getParseData(secondContent);
-  const filesKeys = generateKeys(firstContentToArray, secondContentToArray);
+  const firstArray = getParseData(firstContent);
+  const secondArray = getParseData(secondContent);
+  const filesKeys = generateKeys(firstArray, secondArray);
 
-  const resultToArray = getResultToArray(
-    filesKeys,
-    firstContentToArray,
-    secondContentToArray,
-  );
-  return formatter(resultToArray, formatName);
+  const result = getResultToArray(filesKeys, firstArray, secondArray);
+  return formatter(result, formatName);
 };
 
 export const setOperator = (operation) => {

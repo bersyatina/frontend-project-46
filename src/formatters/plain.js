@@ -1,5 +1,3 @@
-import { isComparisonObject } from '../parsers/parsers.js';
-
 const getPrimitiveData = (data) => {
   switch (true) {
     case typeof data === 'string':
@@ -26,25 +24,23 @@ const setRemovedOrUpdatedString = (resultToArray, item, filter, res) => {
 const getPlainData = (resultToArray, path = '') => {
   const result = resultToArray
     .map((item) => {
-      if (isComparisonObject(item)) {
-        const trimmedPath = `${path}.${item.key}`.replace(/^\.+/, '');
-        const res = `'${trimmedPath}'`;
-        const filter = resultToArray.filter(
-          (value) => value.key === item.key,
-        );
-        const resultValue = getPrimitiveData(item.value);
-        switch (true) {
-          case (item.operation === 'added' && filter.length !== 2):
-            return `Property ${res} was added with value: ${resultValue}`;
-          case item.operation === 'deleted':
-            return setRemovedOrUpdatedString(resultToArray, item, filter, res);
-          case (item.operation === 'same' && typeof item.value === 'object'):
-            return getPlainData(item.value, trimmedPath);
-          default:
-            break;
-        }
+      const trimmedPath = `${path}.${item.key}`.replace(/^\.+/, '');
+
+      const res = `'${trimmedPath}'`;
+      const filter = resultToArray.filter(
+        (value) => value.key === item.key,
+      );
+      const resultValue = getPrimitiveData(item.value);
+      switch (true) {
+        case (item.operation === 'added' && filter.length !== 2):
+          return `Property ${res} was added with value: ${resultValue}`;
+        case item.operation === 'deleted':
+          return setRemovedOrUpdatedString(resultToArray, item, filter, res);
+        case (item.operation === 'same' && typeof item.value === 'object'):
+          return getPlainData(item.value, trimmedPath);
+        default:
+          return '';
       }
-      return '';
     }, resultToArray)
     .filter((item) => item)
     .join('\n');

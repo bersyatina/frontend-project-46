@@ -1,57 +1,60 @@
 import {
-  describe, expect, it, test,
+  describe, expect, test,
 } from '@jest/globals';
 import fs from 'fs';
-import * as index from '../src/index.js';
+import { generateKeys } from '../src/index.js';
 import getDiffFiles from '../src/index.js';
+import path from 'path';
+import * as process from 'process';
 
-const readFixtureFile = (filename) => fs.readFileSync(`__fixtures__/${filename}`, 'utf8');
+const getFilePath = (filePath) => `__fixtures__/${filePath}`;
+
+const contentFirst = {
+  host: 'hexlet.io',
+  timeout: 50,
+  proxy: '123.234.53.22',
+  follow: false,
+};
+const contentSecond = {
+  timeout: 20,
+  verbose: true,
+  host: 'hexlet.io',
+};
+
+const readFixtureFile = (fileName) => fs.readFileSync(
+  path.resolve(process.cwd(), getFilePath(fileName)), 'utf8');
 
 test('generateKeys', () => {
   expect(
-    index.generateKeys(
-      {
-        host: 'hexlet.io',
-        timeout: 50,
-        proxy: '123.234.53.22',
-        follow: false,
-      },
-      {
-        timeout: 20,
-        verbose: true,
-        host: 'hexlet.io',
-      },
-    ),
+    generateKeys(contentFirst,contentSecond),
   ).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
 });
 
-const FilesPath = (filePath1, filePath2) => [
-  `__fixtures__/${filePath1}`,
-  `__fixtures__/${filePath2}`,
-];
-
-const expectedResult = (stylishFile, plainFile, jsonFile) => ({
-  stylish: readFixtureFile(stylishFile),
-  plain: readFixtureFile(plainFile),
-  json: readFixtureFile(jsonFile),
-});
+const inputPaths = {
+  firstPath: getFilePath('file3.json'),
+  secondPath: getFilePath('file4.json'),
+};
 
 const testCases = [
   {
-    name: 'differ files',
-    inputFiles: FilesPath('file3.json', 'file4.json'),
-    expected: expectedResult('resultStylish', 'resultPlain', 'resultJson.json'),
+    format: 'stylish',
+    expectedContent: readFixtureFile('resultStylish'),
+    ...inputPaths,
+  },
+  {
+    format: 'plain',
+    expectedContent: readFixtureFile('resultPlain'),
+    ...inputPaths,
+  },
+  {
+    format: 'json',
+    expectedContent: readFixtureFile('resultJson.json'),
+    ...inputPaths,
   },
 ];
 
 describe('getDiffFiles', () => {
-  testCases.forEach((testCase) => {
-    it(`${testCase.name}`, () => {
-      const { inputFiles, expected } = testCase;
-      Object.keys(expected).forEach((format) => {
-        const actualResult = getDiffFiles(...inputFiles, format);
-        expect(actualResult).toBe(expected[format]);
-      });
-    });
+  test.each(testCases)('differTest', ({ format, expectedContent, firstPath, secondPath}) => {
+    expect(getDiffFiles(firstPath, secondPath, format)).toBe(expectedContent)
   });
 });
