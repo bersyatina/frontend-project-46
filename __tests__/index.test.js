@@ -2,10 +2,10 @@ import {
   describe, expect, test,
 } from '@jest/globals';
 import fs from 'fs';
-import { generateKeys } from '../src/index.js';
-import getDiffFiles from '../src/index.js';
 import path from 'path';
 import * as process from 'process';
+import { generateKeys, getDiffFiles } from '../src/index.js';
+// import getDiffFiles from '../src/index.js';
 
 const getFilePath = (filePath) => `__fixtures__/${filePath}`;
 
@@ -21,12 +21,13 @@ const contentSecond = {
   host: 'hexlet.io',
 };
 
-const readFixtureFile = (fileName) => fs.readFileSync(
-  path.resolve(process.cwd(), getFilePath(fileName)), 'utf8');
+const readFixtureFile = (fileName) => fs.readFileSync(path.resolve(
+  process.cwd(), getFilePath(fileName),
+), 'utf8');
 
 test('generateKeys', () => {
   expect(
-    generateKeys(contentFirst,contentSecond),
+    generateKeys(contentFirst, contentSecond),
   ).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
 });
 
@@ -54,7 +55,7 @@ const testCases = [
 ];
 
 describe('getDiffFiles', () => {
-  test.each(testCases)('differTest', ({ format, expectedContent, firstPath, secondPath}) => {
-    expect(getDiffFiles(firstPath, secondPath, format)).toBe(expectedContent)
+  test.each(testCases)('differTest', ({ format, expectedContent, firstPath, secondPath }) => {
+    expect(getDiffFiles(firstPath, secondPath, format)).toBe(expectedContent);
   });
 });

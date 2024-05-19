@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import { isComparisonObject } from '../parsers/parsers.js';
 import { setOperator } from '../index.js';
-import _ from 'lodash';
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
@@ -10,7 +10,9 @@ const getResultToStylish = (resultToArray, depth = 1) => {
     return resultToArray;
   }
 
-  const relatedData = { depth, longIdent, lastIndent, currentIdent };
+  const relatedData = {
+    depth, longIdent, lastIndent, currentIdent
+  };
   if (_.isPlainObject(resultToArray)) {
     return getResultOfObject(resultToArray, relatedData);
   }
@@ -25,7 +27,7 @@ const getResultToStylish = (resultToArray, depth = 1) => {
 };
 
 const getResultOfObject = (resultToArray, relatedData) => {
-  const {depth, longIdent, lastIndent} = relatedData;
+  const { depth, longIdent, lastIndent } = relatedData;
   const string = Object.keys(resultToArray).map((currentKey) => {
     const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
     return `${longIdent}${currentKey}: ${resultString}`;

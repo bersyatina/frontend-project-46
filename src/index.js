@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import * as process from 'process';
 import getParseData from './parsers/parsers.js';
 import formatter from './formatters/formatter.js';
-import * as process from 'process';
 
 export const getFileData = (filepath) => [
   fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8'),
@@ -65,18 +65,20 @@ const getResultToArray = (filesKeys, firstContent, secondContent) => {
     if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
       return getComparison(fileKey, firstContent, secondContent);
     }
-    const arrayKeys = generateKeys(firstContent[fileKey],secondContent[fileKey]);
+    const arrayKeys = generateKeys(firstContent[fileKey], secondContent[fileKey]);
     const comparison = getComparison(fileKey, firstContent, secondContent);
     return setComparisonObject(
       comparison.operation,
       comparison.key,
-      getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey],
-    ));    
+      getResultToArray(
+        arrayKeys, firstContent[fileKey], secondContent[fileKey],
+      ),
+    );
   });
   return getComparisonArray(result);
 };
 
-export default (firstPath, secondPath, formatName = 'stylish') => {
+export const getDiffFiles = (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
   const secondContent = getFileData(secondPath);
 
