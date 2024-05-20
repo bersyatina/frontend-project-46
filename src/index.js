@@ -50,16 +50,19 @@ const getResultToArray = (filesKeys, firstContent, secondContent) => filesKeys.m
   if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
     return getComparison(fileKey, firstContent, secondContent);
   }
-  const arrayKeys = _.sortBy(Object.keys({...firstContent[fileKey], ...secondContent[fileKey]}));
+  const arrayKeys = _.sortBy(Object.keys({ ...firstContent[fileKey], ...secondContent[fileKey] }));
   const comparison = getComparison(fileKey, firstContent, secondContent);
   return {
     operation: comparison.operation,
     key: comparison.key,
     value: getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
   };
-}).reduce((acc, currentValue) => currentValue.operation === 'comparisonObject'
-  ? [...acc, ...currentValue.value]
-  : [...acc, currentValue], []);
+}).reduce((acc, currentValue) => {
+  if (currentValue.operation === 'comparisonObject') {
+    return [...acc, ...currentValue.value]; 
+  }
+  return [...acc, currentValue];
+}, []);
 
 export default (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
@@ -67,7 +70,7 @@ export default (firstPath, secondPath, formatName = 'stylish') => {
 
   const firstArray = getParseData(firstContent[0], firstContent[1]);
   const secondArray = getParseData(secondContent[0], secondContent[1]);
-  const filesKeys = _.sortBy(Object.keys({...firstArray, ...secondArray}));
+  const filesKeys = _.sortBy(Object.keys({ ...firstArray, ...secondArray }));
 
   const result = getResultToArray(filesKeys, firstArray, secondArray);
   return formatter(result, formatName);

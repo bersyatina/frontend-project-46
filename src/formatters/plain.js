@@ -33,6 +33,8 @@ const getPlainData = (resultToArray, path = []) => resultToArray
           break;
         }
         return getPlainData(item.value, [...path, item.key]);
+      default:
+        return '';
     }
     return '';
   }, resultToArray)
