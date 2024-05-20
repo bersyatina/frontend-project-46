@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { isComparisonObject } from '../parsers/parsers.js';
 
-export const getResultToStylish = (resultToArray, depth = 1) => {
+const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
   const longIdent = '  '.repeat(depth + 1);
   const lastIndent = '  '.repeat(depth - 1);
@@ -65,3 +65,5 @@ const getResultString = (item, resultToArray, relatedData) => {
   }
   return line + currentItem.value;
 };
+
+export default getResultToStylish;
