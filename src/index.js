@@ -59,7 +59,7 @@ const getResultToArray = (filesKeys, firstContent, secondContent) => filesKeys.m
   };
 }).reduce((acc, currentValue) => {
   if (currentValue.operation === 'comparisonObject') {
-    return [...acc, ...currentValue.value]; 
+    return [...acc, ...currentValue.value];
   }
   return [...acc, currentValue];
 }, []);
