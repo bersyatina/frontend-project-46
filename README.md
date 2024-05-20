@@ -15,7 +15,7 @@ Difference generator determines the difference between two data structures and s
 * Recursive comparison of nested structures
 
 ## Requirements
-[Node.js](https://nodejs.org/en/download)
+[Node.js](https://nodejs.org/en/download) - v20.11.1
 
 ## Setup
 

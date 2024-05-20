@@ -87,14 +87,3 @@ export default (firstPath, secondPath, formatName = 'stylish') => {
   const result = getResultToArray(filesKeys, firstArray, secondArray);
   return formatter(result, formatName);
 };
-
-export const setOperator = (operation) => {
-  switch (operation) {
-    case 'added':
-      return '+';
-    case 'deleted':
-      return '-';
-    default:
-      return ' ';
-  }
-};

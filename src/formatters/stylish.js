@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import { isComparisonObject } from '../parsers/parsers.js';
-import { setOperator } from '../index.js';
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
@@ -34,6 +33,17 @@ const getResultOfObject = (resultToArray, relatedData) => {
   });
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
+};
+
+const setOperator = (operation) => {
+  switch (operation) {
+    case 'added':
+      return '+';
+    case 'deleted':
+      return '-';
+    default:
+      return ' ';
+  }
 };
 
 const getResultString = (item, resultToArray, relatedData) => {
