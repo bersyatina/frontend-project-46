@@ -8,9 +8,7 @@ import getDiffFiles from '../src/index.js';
 
 const getFilePath = (filePath) => `__fixtures__/${filePath}`;
 
-const readFixtureFile = (fileName) => fs.readFileSync(path.resolve(
-  process.cwd(), getFilePath(fileName),
-), 'utf8');
+const readFixtureFile = (fileName) => fs.readFileSync(path.resolve(process.cwd(), getFilePath(fileName)), 'utf8');
 
 const inputPaths = {
   firstPath: getFilePath('file3.json'),
