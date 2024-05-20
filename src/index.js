@@ -29,29 +29,29 @@ const isValueNotPlainObject = (
   secondArray,
 ) => !_.isPlainObject(firstArray[fileKey]) || !_.isPlainObject(secondArray[fileKey]);
 
-const setComparisonObject = (operation, key, value) => ({ operation, key, value });
+const compare = (operation, key, value) => ({ operation, key, value });
 
 const getComparison = (fileKey, firstContent, secondContent) => {
   const valueFirst = firstContent[fileKey];
   const valueSecond = secondContent[fileKey];
   if (isKeyExistsInArrays(fileKey, firstContent, secondContent)) {
     if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
-      const removeObj = setComparisonObject('deleted', fileKey, valueFirst);
-      const addedObj = setComparisonObject('added', fileKey, valueSecond);
-      const oldObject = setComparisonObject('same', fileKey, valueFirst);
-      const compObj = setComparisonObject('comparisonObject', fileKey, [
+      const removeObj = compare('deleted', fileKey, valueFirst);
+      const addedObj = compare('added', fileKey, valueSecond);
+      const oldObject = compare('same', fileKey, valueFirst);
+      const compObj = compare('comparisonObject', fileKey, [
         removeObj,
         addedObj,
       ]);
       return valueFirst === valueSecond ? oldObject : compObj;
     }
-    return setComparisonObject('same', fileKey, valueFirst);
+    return compare('same', fileKey, valueFirst);
   }
   if (isKeyExistsInOneArray(fileKey, firstContent, secondContent)) {
-    return setComparisonObject('deleted', fileKey, valueFirst);
+    return compare('deleted', fileKey, valueFirst);
   }
   if (isKeyExistsInOneArray(fileKey, secondContent, firstContent)) {
-    return setComparisonObject('added', fileKey, valueSecond);
+    return compare('added', fileKey, valueSecond);
   }
   return {};
 };
@@ -67,7 +67,7 @@ const getResultToArray = (filesKeys, firstContent, secondContent) => {
     }
     const arrayKeys = generateKeys(firstContent[fileKey], secondContent[fileKey]);
     const comparison = getComparison(fileKey, firstContent, secondContent);
-    return setComparisonObject(
+    return compare(
       comparison.operation,
       comparison.key,
       getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
