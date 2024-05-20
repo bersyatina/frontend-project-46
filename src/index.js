@@ -7,21 +7,11 @@ import formatter from './formatters/formatter.js';
 
 export const getFileData = (filepath) => [
   fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf-8'),
-  path.extname(filepath),
+  _.trim(path.extname(filepath), '.'),
 ];
-
-const getComparisonArray = (contentToArray) => contentToArray.reduce((acc, currentValue) => {
-  if (currentValue.operation === 'comparisonObject') {
-    return [...acc, ...currentValue.value];
-  }
-  return [...acc, currentValue];
-}, []);
 
 const isKeyExistsInOneArray = (fileKey, firstArray, secondArray) => firstArray[fileKey]
   !== undefined && secondArray[fileKey] === undefined;
-
-const isKeyExistsInArrays = (fileKey, firstArray, secondArray) => firstArray[fileKey]
-  !== undefined && secondArray[fileKey] !== undefined;
 
 const isValueNotPlainObject = (
   fileKey,
@@ -29,60 +19,57 @@ const isValueNotPlainObject = (
   secondArray,
 ) => !_.isPlainObject(firstArray[fileKey]) || !_.isPlainObject(secondArray[fileKey]);
 
-const compare = (operation, key, value) => ({ operation, key, value });
-
 const getComparison = (fileKey, firstContent, secondContent) => {
   const valueFirst = firstContent[fileKey];
   const valueSecond = secondContent[fileKey];
-  if (isKeyExistsInArrays(fileKey, firstContent, secondContent)) {
+  if (firstContent[fileKey] !== undefined && secondContent[fileKey] !== undefined) {
     if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
-      const removeObj = compare('deleted', fileKey, valueFirst);
-      const addedObj = compare('added', fileKey, valueSecond);
-      const oldObject = compare('same', fileKey, valueFirst);
-      const compObj = compare('comparisonObject', fileKey, [
-        removeObj,
-        addedObj,
-      ]);
-      return valueFirst === valueSecond ? oldObject : compObj;
+      return valueFirst === valueSecond
+        ? {operation: 'same', key: fileKey, value: valueFirst}
+        : {
+          operation: 'comparisonObject', key: fileKey, value: [
+            {operation: 'removed', key: fileKey, value: valueFirst},
+            {operation: 'updated', key: fileKey, value: valueSecond},
+          ]
+        };
     }
-    return compare('same', fileKey, valueFirst);
+    return {operation: 'same', key: fileKey, value: valueFirst};
   }
   if (isKeyExistsInOneArray(fileKey, firstContent, secondContent)) {
-    return compare('deleted', fileKey, valueFirst);
+    return {operation: 'deleted', key: fileKey, value: valueFirst};
   }
   if (isKeyExistsInOneArray(fileKey, secondContent, firstContent)) {
-    return compare('added', fileKey, valueSecond);
+    return {operation: 'added', key: fileKey, value: valueSecond};
   }
   return {};
 };
 
-export const generateKeys = (firsObj, secondObj) => _.sortBy(Object.keys({
-  ...firsObj, ...secondObj,
-}));
-
 const getResultToArray = (filesKeys, firstContent, secondContent) => {
-  const result = filesKeys.map((fileKey) => {
+  return filesKeys.map((fileKey) => {
     if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
       return getComparison(fileKey, firstContent, secondContent);
     }
-    const arrayKeys = generateKeys(firstContent[fileKey], secondContent[fileKey]);
+    const arrayKeys = _.sortBy(Object.keys({...firstContent[fileKey], ...secondContent[fileKey]}));
     const comparison = getComparison(fileKey, firstContent, secondContent);
-    return compare(
-      comparison.operation,
-      comparison.key,
-      getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
-    );
-  });
-  return getComparisonArray(result);
+    return {
+      operation: comparison.operation,
+      key: comparison.key,
+      value: getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
+    };
+  }).reduce((acc, currentValue) => {
+    return currentValue.operation === 'comparisonObject'
+      ? [...acc, ...currentValue.value]
+      : [...acc, currentValue];
+  }, []);
 };
 
 export default (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
   const secondContent = getFileData(secondPath);
 
-  const firstArray = getParseData(firstContent);
-  const secondArray = getParseData(secondContent);
-  const filesKeys = generateKeys(firstArray, secondArray);
+  const firstArray = getParseData(firstContent[0], firstContent[1]);
+  const secondArray = getParseData(secondContent[0], secondContent[1]);
+  const filesKeys = _.sortBy(Object.keys({...firstArray, ...secondArray}));
 
   const result = getResultToArray(filesKeys, firstArray, secondArray);
   return formatter(result, formatName);

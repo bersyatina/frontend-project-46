@@ -19,12 +19,12 @@
         "value": 200
       },
       {
-        "operation": "deleted",
+        "operation": "removed",
         "key": "setting3",
         "value": true
       },
       {
-        "operation": "added",
+        "operation": "updated",
         "key": "setting3",
         "value": null
       },
@@ -49,12 +49,12 @@
             "key": "doge",
             "value": [
               {
-                "operation": "deleted",
+                "operation": "removed",
                 "key": "wow",
                 "value": ""
               },
               {
-                "operation": "added",
+                "operation": "updated",
                 "key": "wow",
                 "value": "so much"
               }
@@ -79,12 +79,12 @@
     "key": "group1",
     "value": [
       {
-        "operation": "deleted",
+        "operation": "removed",
         "key": "baz",
         "value": "bas"
       },
       {
-        "operation": "added",
+        "operation": "updated",
         "key": "baz",
         "value": "bars"
       },
@@ -94,14 +94,14 @@
         "value": "bar"
       },
       {
-        "operation": "deleted",
+        "operation": "removed",
         "key": "nest",
         "value": {
           "key": "value"
         }
       },
       {
-        "operation": "added",
+        "operation": "updated",
         "key": "nest",
         "value": "str"
       }

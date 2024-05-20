@@ -1,50 +1,43 @@
 const getPrimitiveData = (data) => {
   switch (true) {
-    case typeof data === 'string':
-      return `'${data}'`;
     case data instanceof Object:
       return '[complex value]';
+    case typeof data === 'string':
+      return `'${data}'`;
     default:
-      return data;
+      return `${data}`;
   }
 };
 
-const setRemovedOrUpdatedString = (resultToArray, item, filter, stringPath) => {
-  if (filter.length !== 2) {
-    return `Property '${stringPath}' was removed`;
-  }
-  const nextItem = resultToArray.findIndex((findItem) => findItem === item) + 1;
+const setUpdatedString = (resultToArray, index, stringPath) => {
   const nextValue = getPrimitiveData(
-    resultToArray[nextItem].value,
+    resultToArray[index + 1].value,
   );
-  const primitiveItem = getPrimitiveData(item.value);
+  const primitiveItem = getPrimitiveData(resultToArray[index].value);
   return `Property '${stringPath}' was updated. From ${primitiveItem} to ${nextValue}`;
 };
 
-const getPlainData = (resultToArray, path = []) => {
-  const result = resultToArray
-    .map((item) => {
-      const newPath = [...path, item.key];
-      const stringPath = newPath.join('.');
-      const filter = resultToArray.filter(
-        (value) => value.key === item.key,
-      );
-      const resultValue = getPrimitiveData(item.value);
-      switch (true) {
-        case (item.operation === 'added' && filter.length !== 2):
-          return `Property '${stringPath}' was added with value: ${resultValue}`;
-        case item.operation === 'deleted':
-          return setRemovedOrUpdatedString(resultToArray, item, filter, stringPath);
-        case (item.operation === 'same' && typeof item.value === 'object'):
-          return getPlainData(item.value, newPath);
-        default:
-          return '';
-      }
-    }, resultToArray)
-    .filter((item) => item)
-    .join('\n');
-
-  return `${result}`;
-};
+const getPlainData = (resultToArray, path = []) => resultToArray
+  .map((item, index) => {
+    const stringPath = [...path, item.key].join('.');
+    const resultValue = getPrimitiveData(item.value);
+    switch (item.operation) {
+      case 'added':
+        return `Property '${stringPath}' was added with value: ${resultValue}`;
+      case 'deleted':
+        return `Property '${stringPath}' was removed`;
+      case 'removed':
+        return setUpdatedString(resultToArray, index, stringPath);
+      case 'same':
+        if (typeof item.value !== 'object') {
+          break;
+        }
+        return getPlainData(item.value, [...path, item.key]);
+      default:
+        return '';
+    }
+  }, resultToArray)
+  .filter((item) => item)
+  .join('\n');
 
 export default getPlainData;

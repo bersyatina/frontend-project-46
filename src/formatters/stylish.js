@@ -1,5 +1,21 @@
 import _ from 'lodash';
-import { isComparisonObject } from '../parsers/parsers.js';
+
+const setOperator = (operation) => {
+  switch (operation) {
+    case 'added':
+    case 'updated':
+      return '+';
+    case 'deleted':
+    case 'removed':
+      return '-';
+    default:
+      return ' ';
+  }
+};
+
+const isComparisonObject = (object) => object.key !== undefined
+  && object.operation !== undefined
+  && object.value !== undefined;
 
 const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
@@ -8,62 +24,33 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   if (typeof resultToArray !== 'object' || resultToArray === null) {
     return resultToArray;
   }
-
   const relatedData = {
     depth, longIdent, lastIndent, currentIdent,
   };
+  
   if (_.isPlainObject(resultToArray)) {
-    // eslint-disable-next-line no-use-before-define
-    return getResultOfObject(resultToArray, relatedData);
+    const string = Object.keys(resultToArray).map((currentKey) => {
+      const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
+      return `${longIdent}${currentKey}: ${resultString}`;
+    }).join('\n');
+    return `{\n${string}\n${lastIndent}}`;
   }
-  // eslint-disable-next-line no-use-before-define
-  const string = resultToArray.map((item) => getResultString(
-    item,
-    resultToArray,
-    relatedData,
-  ), resultToArray);
-
-  const joinedString = string.join('\n');
-  return `{\n${joinedString}\n${lastIndent}}`;
-};
-
-const getResultOfObject = (resultToArray, relatedData) => {
-  const { depth, longIdent, lastIndent } = relatedData;
-  const string = Object.keys(resultToArray).map((currentKey) => {
-    const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
-    return `${longIdent}${currentKey}: ${resultString}`;
+  const string = resultToArray.map((item) => {
+    const { longIdent, currentIdent, depth } = relatedData;
+    const currentOperator = setOperator(item.operation);
+    if (!isComparisonObject(item)) {
+      const filteredArray = resultToArray.find((findItem) => item === findItem);
+      const resultToStylish = getResultToStylish(item, depth + 2);
+      return `${longIdent}${filteredArray}: ${resultToStylish}`;
+    }
+    const line = `${currentIdent}${currentOperator} ${item.key}: `;
+    if (typeof item.value === 'object') {
+      return line + getResultToStylish(item.value, depth + 2);
+    }
+    return line + item.value;
   });
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
-};
-
-const setOperator = (operation) => {
-  switch (operation) {
-    case 'added':
-      return '+';
-    case 'deleted':
-      return '-';
-    default:
-      return ' ';
-  }
-};
-
-const getResultString = (item, resultToArray, relatedData) => {
-  const { longIdent, currentIdent, depth } = relatedData;
-  const currentItem = item;
-  const currentOperator = currentItem.operation === ''
-    ? ' '
-    : setOperator(currentItem.operation);
-  if (!isComparisonObject(currentItem)) {
-    const filteredArray = resultToArray.find((findItem) => item === findItem);
-    const resultToStylish = getResultToStylish(currentItem, depth + 2);
-    return `${longIdent}${filteredArray}: ${resultToStylish}`;
-  }
-  const line = `${currentIdent}${currentOperator} ${currentItem.key}: `;
-  if (typeof currentItem.value === 'object') {
-    return line + getResultToStylish(currentItem.value, depth + 2);
-  }
-  return line + currentItem.value;
 };
 
 export default getResultToStylish;
