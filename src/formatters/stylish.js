@@ -1,10 +1,35 @@
 import _ from 'lodash';
 import { isComparisonObject } from '../parsers/parsers.js';
 
+export const getResultToStylish = (resultToArray, depth = 1) => {
+  const currentIdent = '  '.repeat(depth);
+  const longIdent = '  '.repeat(depth + 1);
+  const lastIndent = '  '.repeat(depth - 1);
+  if (typeof resultToArray !== 'object' || resultToArray === null) {
+    return resultToArray;
+  }
+
+  const relatedData = {
+    depth, longIdent, lastIndent, currentIdent,
+  };
+  if (_.isPlainObject(resultToArray)) {
+    // eslint-disable-next-line no-use-before-define
+    return getResultOfObject(resultToArray, relatedData);
+  }
+  // eslint-disable-next-line no-use-before-define
+  const string = resultToArray.map((item) => getResultString(
+    item,
+    resultToArray,
+    relatedData,
+  ), resultToArray);
+
+  const joinedString = string.join('\n');
+  return `{\n${joinedString}\n${lastIndent}}`;
+};
+
 const getResultOfObject = (resultToArray, relatedData) => {
   const { depth, longIdent, lastIndent } = relatedData;
   const string = Object.keys(resultToArray).map((currentKey) => {
-    // eslint-disable-next-line no-use-before-define
     const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
     return `${longIdent}${currentKey}: ${resultString}`;
   });
@@ -31,7 +56,6 @@ const getResultString = (item, resultToArray, relatedData) => {
     : setOperator(currentItem.operation);
   if (!isComparisonObject(currentItem)) {
     const filteredArray = resultToArray.find((findItem) => item === findItem);
-    // eslint-disable-next-line no-use-before-define
     const resultToStylish = getResultToStylish(currentItem, depth + 2);
     return `${longIdent}${filteredArray}: ${resultToStylish}`;
   }
@@ -40,28 +64,4 @@ const getResultString = (item, resultToArray, relatedData) => {
     return line + getResultToStylish(currentItem.value, depth + 2);
   }
   return line + currentItem.value;
-};
-
-export const getResultToStylish = (resultToArray, depth = 1) => {
-  const currentIdent = '  '.repeat(depth);
-  const longIdent = '  '.repeat(depth + 1);
-  const lastIndent = '  '.repeat(depth - 1);
-  if (typeof resultToArray !== 'object' || resultToArray === null) {
-    return resultToArray;
-  }
-
-  const relatedData = {
-    depth, longIdent, lastIndent, currentIdent,
-  };
-  if (_.isPlainObject(resultToArray)) {
-    return getResultOfObject(resultToArray, relatedData);
-  }
-  const string = resultToArray.map((item) => getResultString(
-    item,
-    resultToArray,
-    relatedData,
-  ), resultToArray);
-
-  const joinedString = string.join('\n');
-  return `{\n${joinedString}\n${lastIndent}}`;
 };
