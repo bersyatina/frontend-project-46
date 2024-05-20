@@ -11,7 +11,7 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   }
 
   const relatedData = {
-    depth, longIdent, lastIndent, currentIdent
+    depth, longIdent, lastIndent, currentIdent,
   };
   if (_.isPlainObject(resultToArray)) {
     return getResultOfObject(resultToArray, relatedData);

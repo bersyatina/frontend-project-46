@@ -36,7 +36,9 @@ const testCases = [
 ];
 
 describe('getDiffFiles', () => {
-  test.each(testCases)('differTest', ({ format, expectedContent, firstPath, secondPath }) => {
-    expect(getDiffFiles(firstPath, secondPath, format)).toBe(expectedContent)
+  test.each(testCases)('differTest', ({
+    format, expectedContent, firstPath, secondPath,
+  }) => {
+    expect(getDiffFiles(firstPath, secondPath, format)).toBe(expectedContent);
   });
 });

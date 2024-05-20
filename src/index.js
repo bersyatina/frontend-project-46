@@ -70,9 +70,7 @@ const getResultToArray = (filesKeys, firstContent, secondContent) => {
     return setComparisonObject(
       comparison.operation,
       comparison.key,
-      getResultToArray(
-        arrayKeys, firstContent[fileKey], secondContent[fileKey],
-      ),
+      getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
     );
   });
   return getComparisonArray(result);
