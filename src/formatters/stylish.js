@@ -4,6 +4,7 @@ import { isComparisonObject } from '../parsers/parsers.js';
 const getResultOfObject = (resultToArray, relatedData) => {
   const { depth, longIdent, lastIndent } = relatedData;
   const string = Object.keys(resultToArray).map((currentKey) => {
+    // eslint-disable-next-line no-use-before-define
     const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
     return `${longIdent}${currentKey}: ${resultString}`;
   });
@@ -30,6 +31,7 @@ const getResultString = (item, resultToArray, relatedData) => {
     : setOperator(currentItem.operation);
   if (!isComparisonObject(currentItem)) {
     const filteredArray = resultToArray.find((findItem) => item === findItem);
+    // eslint-disable-next-line no-use-before-define
     const resultToStylish = getResultToStylish(currentItem, depth + 2);
     return `${longIdent}${filteredArray}: ${resultToStylish}`;
   }
@@ -40,7 +42,7 @@ const getResultString = (item, resultToArray, relatedData) => {
   return line + currentItem.value;
 };
 
-const getResultToStylish = (resultToArray, depth = 1) => {
+export const getResultToStylish = (resultToArray, depth = 1) => {
   const currentIdent = '  '.repeat(depth);
   const longIdent = '  '.repeat(depth + 1);
   const lastIndent = '  '.repeat(depth - 1);
@@ -63,5 +65,3 @@ const getResultToStylish = (resultToArray, depth = 1) => {
   const joinedString = string.join('\n');
   return `{\n${joinedString}\n${lastIndent}}`;
 };
-
-export { getResultToStylish, getResultString, getResultOfObject };
