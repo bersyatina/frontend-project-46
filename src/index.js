@@ -25,43 +25,41 @@ const getComparison = (fileKey, firstContent, secondContent) => {
   if (firstContent[fileKey] !== undefined && secondContent[fileKey] !== undefined) {
     if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
       return valueFirst === valueSecond
-        ? {operation: 'same', key: fileKey, value: valueFirst}
+        ? { operation: 'same', key: fileKey, value: valueFirst }
         : {
-          operation: 'comparisonObject', key: fileKey, value: [
-            {operation: 'removed', key: fileKey, value: valueFirst},
-            {operation: 'updated', key: fileKey, value: valueSecond},
-          ]
+          operation: 'comparisonObject',
+          key: fileKey,
+          value: [
+            { operation: 'removed', key: fileKey, value: valueFirst },
+            { operation: 'updated', key: fileKey, value: valueSecond },
+          ],
         };
     }
-    return {operation: 'same', key: fileKey, value: valueFirst};
+    return { operation: 'same', key: fileKey, value: valueFirst };
   }
   if (isKeyExistsInOneArray(fileKey, firstContent, secondContent)) {
-    return {operation: 'deleted', key: fileKey, value: valueFirst};
+    return { operation: 'deleted', key: fileKey, value: valueFirst };
   }
   if (isKeyExistsInOneArray(fileKey, secondContent, firstContent)) {
-    return {operation: 'added', key: fileKey, value: valueSecond};
+    return { operation: 'added', key: fileKey, value: valueSecond };
   }
   return {};
 };
 
-const getResultToArray = (filesKeys, firstContent, secondContent) => {
-  return filesKeys.map((fileKey) => {
-    if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
-      return getComparison(fileKey, firstContent, secondContent);
-    }
-    const arrayKeys = _.sortBy(Object.keys({...firstContent[fileKey], ...secondContent[fileKey]}));
-    const comparison = getComparison(fileKey, firstContent, secondContent);
-    return {
-      operation: comparison.operation,
-      key: comparison.key,
-      value: getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
-    };
-  }).reduce((acc, currentValue) => {
-    return currentValue.operation === 'comparisonObject'
-      ? [...acc, ...currentValue.value]
-      : [...acc, currentValue];
-  }, []);
-};
+const getResultToArray = (filesKeys, firstContent, secondContent) => filesKeys.map((fileKey) => {
+  if (isValueNotPlainObject(fileKey, firstContent, secondContent)) {
+    return getComparison(fileKey, firstContent, secondContent);
+  }
+  const arrayKeys = _.sortBy(Object.keys({...firstContent[fileKey], ...secondContent[fileKey]}));
+  const comparison = getComparison(fileKey, firstContent, secondContent);
+  return {
+    operation: comparison.operation,
+    key: comparison.key,
+    value: getResultToArray(arrayKeys, firstContent[fileKey], secondContent[fileKey]),
+  };
+}).reduce((acc, currentValue) => currentValue.operation === 'comparisonObject'
+  ? [...acc, ...currentValue.value]
+  : [...acc, currentValue], []);
 
 export default (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
