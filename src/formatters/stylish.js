@@ -1,30 +1,6 @@
 import _ from 'lodash';
 import { isComparisonObject } from '../parsers/parsers.js';
 
-const getResultToStylish = (resultToArray, depth = 1) => {
-  const currentIdent = '  '.repeat(depth);
-  const longIdent = '  '.repeat(depth + 1);
-  const lastIndent = '  '.repeat(depth - 1);
-  if (typeof resultToArray !== 'object' || resultToArray === null) {
-    return resultToArray;
-  }
-
-  const relatedData = {
-    depth, longIdent, lastIndent, currentIdent,
-  };
-  if (_.isPlainObject(resultToArray)) {
-    return getResultOfObject(resultToArray, relatedData);
-  }
-  const string = resultToArray.map((item) => getResultString(
-    item,
-    resultToArray,
-    relatedData,
-  ), resultToArray);
-
-  const joinedString = string.join('\n');
-  return `{\n${joinedString}\n${lastIndent}}`;
-};
-
 const getResultOfObject = (resultToArray, relatedData) => {
   const { depth, longIdent, lastIndent } = relatedData;
   const string = Object.keys(resultToArray).map((currentKey) => {
@@ -64,4 +40,28 @@ const getResultString = (item, resultToArray, relatedData) => {
   return line + currentItem.value;
 };
 
-export default getResultToStylish;
+export { getResultToStylish, getResultString, getResultOfObject };
+
+const getResultToStylish = (resultToArray, depth = 1) => {
+  const currentIdent = '  '.repeat(depth);
+  const longIdent = '  '.repeat(depth + 1);
+  const lastIndent = '  '.repeat(depth - 1);
+  if (typeof resultToArray !== 'object' || resultToArray === null) {
+    return resultToArray;
+  }
+
+  const relatedData = {
+    depth, longIdent, lastIndent, currentIdent,
+  };
+  if (_.isPlainObject(resultToArray)) {
+    return getResultOfObject(resultToArray, relatedData);
+  }
+  const string = resultToArray.map((item) => getResultString(
+    item,
+    resultToArray,
+    relatedData,
+  ), resultToArray);
+
+  const joinedString = string.join('\n');
+  return `{\n${joinedString}\n${lastIndent}}`;
+};

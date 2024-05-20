@@ -1,4 +1,4 @@
-import getResultToStylish from './stylish.js';
+import { getResultToStylish } from './stylish.js';
 import getResultToJson from './json.js';
 import getPlainData from './plain.js';
 
