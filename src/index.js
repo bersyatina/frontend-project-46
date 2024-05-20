@@ -78,7 +78,7 @@ const getResultToArray = (filesKeys, firstContent, secondContent) => {
   return getComparisonArray(result);
 };
 
-export const getDiffFiles = (firstPath, secondPath, formatName = 'stylish') => {
+export default (firstPath, secondPath, formatName = 'stylish') => {
   const firstContent = getFileData(firstPath);
   const secondContent = getFileData(secondPath);
 
