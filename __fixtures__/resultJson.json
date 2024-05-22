@@ -1,6 +1,6 @@
 [
   {
-    "operation": "same",
+    "operation": "nested",
     "key": "common",
     "value": [
       {
@@ -19,14 +19,12 @@
         "value": 200
       },
       {
-        "operation": "removed",
+        "operation": "changed",
         "key": "setting3",
-        "value": true
-      },
-      {
-        "operation": "updated",
-        "key": "setting3",
-        "value": null
+        "value": {
+          "removed": true,
+          "updated": null
+        }
       },
       {
         "operation": "added",
@@ -41,22 +39,20 @@
         }
       },
       {
-        "operation": "same",
+        "operation": "nested",
         "key": "setting6",
         "value": [
           {
-            "operation": "same",
+            "operation": "nested",
             "key": "doge",
             "value": [
               {
-                "operation": "removed",
+                "operation": "changed",
                 "key": "wow",
-                "value": ""
-              },
-              {
-                "operation": "updated",
-                "key": "wow",
-                "value": "so much"
+                "value": {
+                  "removed": "",
+                  "updated": "so much"
+                }
               }
             ]
           },
@@ -75,18 +71,16 @@
     ]
   },
   {
-    "operation": "same",
+    "operation": "nested",
     "key": "group1",
     "value": [
       {
-        "operation": "removed",
+        "operation": "changed",
         "key": "baz",
-        "value": "bas"
-      },
-      {
-        "operation": "updated",
-        "key": "baz",
-        "value": "bars"
+        "value": {
+          "removed": "bas",
+          "updated": "bars"
+        }
       },
       {
         "operation": "same",
@@ -94,16 +88,14 @@
         "value": "bar"
       },
       {
-        "operation": "removed",
+        "operation": "changed",
         "key": "nest",
         "value": {
-          "key": "value"
+          "removed": {
+            "key": "value"
+          },
+          "updated": "str"
         }
-      },
-      {
-        "operation": "updated",
-        "key": "nest",
-        "value": "str"
       }
     ]
   },

@@ -1,48 +1,38 @@
 import _ from 'lodash';
 
-const setOperator = (operation) => {
-  switch (operation) {
+const spacesCount = 4;
+const offsetLeft = 2;
+
+const setIndent = (depth) => ' '.repeat(depth * spacesCount - offsetLeft);
+
+const stringify = (value, depth) => {
+  if (!_.isObject(value)) {
+    return `${value}`;
+  }
+  const keys = Object.keys(value);
+  const output = keys.map(
+    (key) => `${setIndent(depth + 1)}  ${key}: ${stringify(value[key], depth + 1)}`,
+  );
+  return `{\n${output.join('\n')}\n  ${setIndent(depth)}}`;
+};
+
+const setFormat = (tree, depth) => tree.map((item) => {
+  const setString = (value, operator) => `${setIndent(depth)}${operator} ${item.key}: ${stringify(value, depth)}\n`;
+  switch (item.operation) {
     case 'added':
-    case 'updated':
-      return '+';
+      return setString(item.value, '+');
     case 'deleted':
-    case 'removed':
-      return '-';
-    default:
-      return ' ';
+      return setString(item.value, '-');
+    case 'same':
+      return setString(item.value, ' ');
+    case 'changed':
+      return `${setString(item.value.removed, '-')}${setString(item.value.updated, '+')}`;
+    case 'nested':
+      return `${setIndent(depth)}  ${item.key}: {\n${setFormat(item.value, depth + 1)
+        .join('')}${setIndent(depth)}  }\n`;
   }
-};
+});
 
-const isComparisonObject = (object) => object.key !== undefined
-  && object.operation !== undefined
-  && object.value !== undefined;
-
-const getResultToStylish = (resultToArray, depth = 1) => {
-  const currentIdent = '  '.repeat(depth);
-  const longIdent = '  '.repeat(depth + 1);
-  const lastIndent = '  '.repeat(depth - 1);
-  if (typeof resultToArray !== 'object' || resultToArray === null) {
-    return resultToArray;
-  }
-  const string = _.isPlainObject(resultToArray)
-    ? Object.keys(resultToArray).map((currentKey) => {
-      const resultString = getResultToStylish(resultToArray[currentKey], depth + 2);
-      return `${longIdent}${currentKey}: ${resultString}`;
-    })
-    : resultToArray.map((item) => {
-      const currentOperator = setOperator(item.operation);
-      if (!isComparisonObject(item)) {
-        const resultToStylish = getResultToStylish(item, depth + 2);
-        return `${longIdent}: ${resultToStylish}`;
-      }
-      const line = `${currentIdent}${currentOperator} ${item.key}: `;
-      if (typeof item.value === 'object') {
-        return line + getResultToStylish(item.value, depth + 2);
-      }
-      return line + item.value;
-    });
-  const joinedString = string.join('\n');
-  return `{\n${joinedString}\n${lastIndent}}`;
-};
+const getResultToStylish = (tree) => `{\n${setFormat(tree, 1).join('')}}`;
 
 export default getResultToStylish;

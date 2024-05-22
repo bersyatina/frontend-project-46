@@ -1,44 +1,41 @@
-const getPrimitiveData = (data) => {
-  switch (true) {
-    case data instanceof Object:
-      return '[complex value]';
-    case typeof data === 'string':
-      return `'${data}'`;
-    default:
-      return `${data}`;
+import _ from "lodash";
+
+const getPrimitiveData = (value) => {
+  if (_.isObject(value)) {
+    return '[complex value]';
   }
+  if (_.isString(value)) {
+    return `'${value}'`;
+  }
+  return value;
 };
 
-const setUpdatedString = (resultToArray, index, stringPath) => {
-  const nextValue = getPrimitiveData(
-    resultToArray[index + 1].value,
-  );
-  const primitiveItem = getPrimitiveData(resultToArray[index].value);
-  return `Property '${stringPath}' was updated. From ${primitiveItem} to ${nextValue}`;
-};
-
-const getPlainData = (resultToArray, path = []) => resultToArray
-  .map((item, index) => {
-    const stringPath = [...path, item.key].join('.');
-    const resultValue = getPrimitiveData(item.value);
+const setIterator = (tree, key = []) => {
+  const format = tree.map((item) => {
+    const keys = [...key, item.key];
+    const path = keys.join('.');
     switch (item.operation) {
-      case 'added':
-        return `Property '${stringPath}' was added with value: ${resultValue}`;
+      case 'nested':
+        return setIterator(item.value, keys);
+      case 'changed':
+        return `Property '${path}' was updated. From ${getPrimitiveData(
+          item.value.removed,
+        )} to ${getPrimitiveData(item.value.updated)}`;
       case 'deleted':
-        return `Property '${stringPath}' was removed`;
-      case 'removed':
-        return setUpdatedString(resultToArray, index, stringPath);
+        return `Property '${path}' was removed`;
+      case 'added':
+        return `Property '${path}' was added with value: ${getPrimitiveData(
+          item.value,
+        )}`;
       case 'same':
-        if (typeof item.value !== 'object') {
-          break;
-        }
-        return getPlainData(item.value, [...path, item.key]);
+        return null;
       default:
-        return '';
+        throw new Error(`Unknown node status: ${item.operation}`);
     }
-    return '';
-  }, resultToArray)
-  .filter((item) => item)
-  .join('\n');
+  });
+  return format.filter(Boolean).join('\n');
+};
+
+const getPlainData = (tree) => setIterator(tree, []);
 
 export default getPlainData;
