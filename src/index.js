@@ -11,13 +11,12 @@ export const getFileData = (filepath) => [
 ];
 
 const getResultToArray = (firstContent, secondContent) => {
-  const arrayKeys = _.sortBy(Object.keys({...firstContent, ...secondContent}));
+  const arrayKeys = _.sortBy(Object.keys({ ...firstContent, ...secondContent }));
   return arrayKeys.map((key) => {
     const firstValue = firstContent[key];
     const secondValue = secondContent[key];
-    
     if (_.isEqual(firstValue, secondValue)) {
-      return {operation: 'same', key, value: firstValue}
+      return { operation: 'same', key, value: firstValue };
     }
 
     if (_.isPlainObject(firstValue) && _.isPlainObject(secondValue)) {
@@ -25,22 +24,22 @@ const getResultToArray = (firstContent, secondContent) => {
         operation: 'nested',
         key,
         value: getResultToArray(firstValue, secondValue),
-      }
+      };
     }
 
     if (firstValue === undefined && secondValue !== undefined) {
-      return {operation: 'added', key, value: secondValue};
+      return { operation: 'added', key, value: secondValue };
     }
 
     if (secondValue === undefined && firstValue !== undefined) {
-      return {operation: 'deleted', key, value: firstValue};
+      return { operation: 'deleted', key, value: firstValue };
     }
 
     return {
       operation: 'changed',
       key,
       value: { removed: firstValue, updated: secondValue },
-    }
+    };
   });
 };
 

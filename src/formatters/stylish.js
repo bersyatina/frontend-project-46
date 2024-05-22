@@ -23,13 +23,13 @@ const setFormat = (tree, depth) => tree.map((item) => {
       return setString(item.value, '+');
     case 'deleted':
       return setString(item.value, '-');
-    case 'same':
-      return setString(item.value, ' ');
     case 'changed':
       return `${setString(item.value.removed, '-')}${setString(item.value.updated, '+')}`;
     case 'nested':
       return `${setIndent(depth)}  ${item.key}: {\n${setFormat(item.value, depth + 1)
         .join('')}${setIndent(depth)}  }\n`;
+    default:
+      return setString(item.value, ' ');
   }
 });
 
